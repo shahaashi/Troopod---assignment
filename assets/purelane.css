@@ -982,3 +982,101 @@
 @media (prefers-reduced-motion: reduce) {
   .pl-ticker__track { animation: none; }
 }
+
+/* Exact reference water cinematics ----------------------------------------- */
+.pl-scenes {
+  background: #eee7fb;
+  display: block;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+}
+.pl-scenes .scene { inset: 0; opacity: 0; position: absolute; transition: opacity 1.5s ease; }
+.pl-scenes .scene.on { opacity: 1; }
+.pl-scenes .s1 { background: linear-gradient(178deg, #fbfffb 0%, #eafaec 24%, #d6f1dc 54%, #bfe8ca 100%); }
+.pl-scenes .s2 { background: linear-gradient(178deg, #f6fdf7 0%, #e3f7e7 26%, #cbedd4 58%, #b2e2c2 100%); }
+.pl-scenes .s3 { background: linear-gradient(178deg, #f0fbf2 0%, #d9f2df 28%, #bde6c8 60%, #a2d9b6 100%); }
+.pl-scenes .s4 { background: linear-gradient(178deg, #e9f8ec 0%, #cdedd6 30%, #addcbe 62%, #8ecdaa 100%); }
+.pl-scenes .water { inset: -14% -10%; pointer-events: none; position: absolute; transition: opacity 1.2s ease; }
+.pl-scenes .wl { inset: 0; position: absolute; translate: var(--px, 0) var(--py, 0); will-change: transform; }
+.pl-scenes .wl .sv { height: 100%; width: 100%; }
+.pl-scenes .wl-a { animation: pl-drift-a 34s linear infinite; mix-blend-mode: soft-light; opacity: 1; }
+.pl-scenes .wl-a .sv { filter: contrast(1.25); }
+.pl-scenes .wl-b { animation: pl-drift-b 23s linear infinite; mix-blend-mode: overlay; opacity: .66; }
+.pl-scenes .wl-c { animation: pl-shaft-sway 19s ease-in-out infinite; mix-blend-mode: overlay; opacity: .6; }
+.pl-scenes .wl-s { animation: pl-surface 11s ease-in-out infinite; mix-blend-mode: overlay; opacity: .72; transform-origin: 50% 0; }
+@keyframes pl-drift-a {
+  0% { transform: translate3d(-3%,0,0) scale(1.06); }
+  50% { transform: translate3d(3%,-1.6%,0) scale(1.13); }
+  100% { transform: translate3d(-3%,0,0) scale(1.06); }
+}
+@keyframes pl-drift-b {
+  0% { transform: translate3d(4%,1%,0) scale(1.1); }
+  50% { transform: translate3d(-4%,-1%,0) scale(1.04); }
+  100% { transform: translate3d(4%,1%,0) scale(1.1); }
+}
+@keyframes pl-shaft-sway {
+  0% { opacity: .34; transform: translate3d(-2%,0,0) skewX(0deg); }
+  50% { opacity: .6; transform: translate3d(2%,0,0) skewX(2.4deg); }
+  100% { opacity: .34; transform: translate3d(-2%,0,0) skewX(0deg); }
+}
+@keyframes pl-surface {
+  0% { opacity: .55; transform: translateY(0) scaleY(1); }
+  50% { opacity: .82; transform: translateY(-1.4%) scaleY(1.14); }
+  100% { opacity: .55; transform: translateY(0) scaleY(1); }
+}
+.pl-scenes[data-d='1'] .water { opacity: 1; }
+.pl-scenes[data-d='2'] .water { opacity: .9; }
+.pl-scenes[data-d='3'] .water { opacity: .76; }
+.pl-scenes[data-d='4'] .water { opacity: .58; }
+.pl-scenes[data-d='1'] .wl-s { opacity: .72; }
+.pl-scenes[data-d='2'] .wl-s,
+.pl-scenes[data-d='3'] .wl-s,
+.pl-scenes[data-d='4'] .wl-s { opacity: 0; }
+.pl-scenes .bub { inset: 0; overflow: hidden; position: absolute; }
+.pl-scenes .bub span {
+  animation: pl-rise var(--dur) linear infinite;
+  animation-delay: var(--dly);
+  background: radial-gradient(circle at 34% 30%, rgba(255,255,255,.9), rgba(255,255,255,0) 64%);
+  border: 1px solid rgba(75,58,143,.26);
+  border-radius: 50%;
+  bottom: -6%;
+  height: var(--s);
+  left: var(--x);
+  opacity: 0;
+  position: absolute;
+  width: var(--s);
+}
+@keyframes pl-rise {
+  0% { opacity: 0; transform: translate3d(0,0,0); }
+  12% { opacity: .7; }
+  88% { opacity: .5; }
+  100% { opacity: 0; transform: translate3d(var(--drift),-116vh,0); }
+}
+.pl-scenes .vig {
+  background:
+    radial-gradient(126% 88% at 50% 26%, transparent 42%, rgba(75,58,143,.07) 80%, rgba(0,80,74,.16) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.40) 0%, transparent 20%, transparent 70%, rgba(0,84,78,.10) 100%);
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+#MainContent[data-template='index'] { position: relative; z-index: 2; }
+#MainContent[data-template='index'] .purelane-hero,
+#MainContent[data-template='index'] .pl-section { background: transparent; }
+
+@media screen and (max-width: 760px) {
+  .pl-scenes .wl-b,
+  .pl-scenes .bub { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-scenes .wl-a,
+  .pl-scenes .wl-b,
+  .pl-scenes .wl-c,
+  .pl-scenes .wl-s,
+  .pl-scenes .bub span { animation: none; }
+  .pl-scenes .wl { translate: none; }
+}

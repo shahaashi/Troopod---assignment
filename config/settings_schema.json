@@ -1453,6 +1453,23 @@
     ]
   },
   {
+    "name": "Purelane homepage",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "purelane_background_enable",
+        "label": "Show animated water background",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "purelane_background_parallax",
+        "label": "Enable pointer and scroll parallax",
+        "default": true
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.customer_accounts.name",
     "settings": [
       {

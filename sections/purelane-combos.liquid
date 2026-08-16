@@ -1,7 +1,7 @@
 {{ 'purelane.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'purelane.js' | asset_url }}" defer="defer"></script>
 
-<purelane-section class="pl-section" id="combos" aria-labelledby="PurelaneCombosHeading-{{ section.id }}">
+<purelane-section class="pl-section" id="combos" data-scene="3" aria-labelledby="PurelaneCombosHeading-{{ section.id }}">
   <div class="pl-wrap">
     {%- assign heading_id = 'PurelaneCombosHeading-' | append: section.id -%}
     {% render 'purelane-section-heading',

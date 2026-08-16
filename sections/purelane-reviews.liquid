@@ -1,7 +1,7 @@
 {{ 'purelane.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'purelane.js' | asset_url }}" defer="defer"></script>
 
-<purelane-section class="pl-section pl-reviews" id="reviews" aria-labelledby="PurelaneReviewsHeading-{{ section.id }}">
+<purelane-section class="pl-section pl-reviews" id="reviews" data-scene="1" aria-labelledby="PurelaneReviewsHeading-{{ section.id }}">
   <div class="pl-wrap">
     <div class="pl-review-head" data-pl-reveal>
       <h2 class="pl-kicker" id="PurelaneReviewsHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
