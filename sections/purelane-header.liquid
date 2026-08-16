@@ -1,0 +1,87 @@
+{{ 'purelane.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'purelane-header.js' | asset_url }}" defer="defer"></script>
+
+<purelane-site-header class="pl-chrome{% if section.settings.show_ticker %} pl-chrome--ticker{% endif %}">
+  {%- if section.settings.show_ticker -%}
+    <div class="pl-ticker" aria-label="Store announcements">
+      <div class="pl-ticker__track">
+        {%- for copy_index in (1..2) -%}
+          <div class="pl-ticker__group"{% if copy_index == 2 %} aria-hidden="true"{% endif %}>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'announcement' and block.settings.text != blank -%}
+                <span {{ block.shopify_attributes }}>{{ block.settings.text | escape }}{% if block.settings.highlight != blank %} <b>{{ block.settings.highlight | escape }}</b>{% endif %}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <header class="pl-site-header" data-pl-site-header>
+    <div class="pl-nav-pill">
+      <a class="pl-brand" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home">
+        <span class="pl-brand__mark">
+          {%- if section.settings.logo != blank -%}
+            {{ section.settings.logo | image_url: width: 120 | image_tag: loading: 'eager', widths: '60, 90, 120', sizes: '40px', alt: shop.name }}
+          {%- else -%}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20.5 8v8L12 21 3.5 16V8L12 3Z"/><path d="M12 12 20.5 8M12 12v9M12 12 3.5 8"/></svg>
+          {%- endif -%}
+        </span>
+        <span class="pl-brand__copy">
+          <span class="pl-brand__name">{{ section.settings.brand_name | default: shop.name | escape }}</span>
+          {%- if section.settings.tagline != blank -%}<span class="pl-brand__tagline">{{ section.settings.tagline | escape }}</span>{%- endif -%}
+        </span>
+      </a>
+
+      {%- if section.settings.menu != blank -%}
+        <nav class="pl-nav" aria-label="Primary navigation">
+          {%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
+        </nav>
+      {%- endif -%}
+
+      <div class="pl-nav-tools">
+        <a class="pl-nav-icon pl-nav-icon--optional" href="{{ routes.search_url }}" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
+        {%- if shop.customer_accounts_enabled -%}<a class="pl-nav-icon pl-nav-icon--optional" href="{{ routes.account_url }}" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6"/></svg></a>{%- endif -%}
+        <a class="pl-nav-icon" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l2.2 10.4a1.6 1.6 0 0 0 1.6 1.3h7.6a1.6 1.6 0 0 0 1.6-1.3L20.5 9H6.4"/><circle cx="10" cy="20.5" r="1.1"/><circle cx="17.5" cy="20.5" r="1.1"/></svg><span class="pl-cart-count" aria-hidden="true">{{ cart.item_count }}</span></a>
+        {%- if section.settings.menu != blank -%}
+          <details class="pl-mobile-menu">
+            <summary class="pl-nav-icon" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></summary>
+            <nav class="pl-mobile-menu__panel" aria-label="Mobile navigation">{%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}</nav>
+          </details>
+        {%- endif -%}
+      </div>
+    </div>
+  </header>
+</purelane-site-header>
+
+{% schema %}
+{
+  "name": "Purelane header",
+  "tag": "section",
+  "class": "section-header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "brand_name", "label": "Brand name", "default": "Purelane" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Clean, simply" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "show_ticker", "label": "Show announcement ticker", "default": true }
+  ],
+  "blocks": [{
+    "type": "announcement",
+    "name": "Announcement",
+    "settings": [
+      { "type": "text", "id": "text", "label": "Text", "default": "Free shipping" },
+      { "type": "text", "id": "highlight", "label": "Highlighted text", "default": "on every bundle across India" }
+    ]
+  }],
+  "presets": [{
+    "name": "Purelane header",
+    "blocks": [
+      { "type": "announcement", "settings": { "text": "Free shipping", "highlight": "on every bundle across India" } },
+      { "type": "announcement", "settings": { "text": "100% plant-based", "highlight": "and non-toxic" } },
+      { "type": "announcement", "settings": { "text": "Loved by", "highlight": "30,000+ happy homes" } }
+    ]
+  }]
+}
+{% endschema %}
