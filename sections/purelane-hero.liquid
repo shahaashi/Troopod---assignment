@@ -105,7 +105,9 @@
                 {%- endif -%}
               {%- endfor -%}
               {%- if product_count == 0 -%}
-                {{ 'product-1' | placeholder_svg_tag: 'purelane-hero__product purelane-hero__placeholder' }}
+                <span class="purelane-hero__product purelane-hero__product--placeholder">
+                  {{ 'product-1' | placeholder_svg_tag: 'purelane-hero__placeholder' }}
+                </span>
               {%- endif -%}
             </div>
 

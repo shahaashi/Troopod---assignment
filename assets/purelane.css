@@ -1080,3 +1080,91 @@
   .pl-scenes .bub span { animation: none; }
   .pl-scenes .wl { translate: none; }
 }
+
+/* Responsive hero guardrails ------------------------------------------------
+ * Keep the reference composition intact while ensuring the stacked tablet and
+ * mobile layout cannot inherit desktop centering or an unbounded product SVG.
+ */
+.purelane-hero__product--placeholder {
+  display: block;
+  flex: 0 0 auto;
+}
+
+@media screen and (max-width: 900px) {
+  .purelane-hero {
+    min-height: 100svh;
+    padding: 112px 0 22px;
+  }
+
+  .purelane-hero__inner {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 100%;
+    padding-inline: clamp(18px, 5vw, 36px);
+    width: 100%;
+  }
+
+  .purelane-hero__content {
+    align-self: stretch;
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
+    width: 100%;
+  }
+
+  .purelane-hero__title {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 7ch;
+  }
+
+  .purelane-hero__rule,
+  .purelane-hero__text {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .purelane-hero__text { max-width: 44ch; }
+  .purelane-hero__actions { justify-content: flex-start; }
+
+  .purelane-hero__trust {
+    align-self: stretch;
+    margin: 20px 0 0;
+    width: 100%;
+  }
+
+  .purelane-hero__slider {
+    align-self: center;
+    height: min(34svh, 300px);
+    margin: 12px auto 0;
+    max-width: 420px;
+    width: min(82vw, 420px);
+  }
+
+  .purelane-hero__products { padding: 0 6% 62px; }
+  .purelane-hero__offer { max-width: 55%; }
+}
+
+@media screen and (max-width: 520px) {
+  .purelane-hero { padding: 104px 0 18px; }
+  .purelane-hero__inner { padding-inline: 18px; }
+  .purelane-hero__title { max-width: 7ch; }
+  .purelane-hero__text { font-size: 15px; }
+  .purelane-hero__actions { gap: 10px; }
+  .purelane-button { min-height: 44px; padding-inline: 18px; }
+  .purelane-hero__trust { gap: 6px; margin-top: 16px; }
+  .purelane-hero__trust-item { min-height: 50px; padding-inline: 5px; }
+  .purelane-hero__slider {
+    height: min(36svh, 280px);
+    margin-top: 8px;
+    width: min(90vw, 360px);
+  }
+  .purelane-hero__products { padding-bottom: 56px; }
+  .purelane-hero__offer { max-width: 62%; }
+}
+
+@media screen and (max-width: 900px) and (max-height: 760px) {
+  .purelane-hero__slider { height: 250px; }
+}
