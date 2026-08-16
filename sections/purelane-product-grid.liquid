@@ -1,7 +1,7 @@
 {{ 'purelane.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'purelane.js' | asset_url }}" defer="defer"></script>
 
-<purelane-section class="pl-section" id="shop" data-scene="3" aria-labelledby="PurelaneShopHeading-{{ section.id }}">
+<purelane-section class="pl-section pl-shop-section" id="shop" data-scene="3" aria-labelledby="PurelaneShopHeading-{{ section.id }}">
   <div class="pl-wrap">
     {%- assign heading_id = 'PurelaneShopHeading-' | append: section.id -%}
     {% render 'purelane-section-heading',
@@ -42,7 +42,7 @@
     { "type": "richtext", "id": "description", "label": "Description" },
     { "type": "collection", "id": "collection", "label": "Collection" },
     { "type": "range", "id": "products_to_show", "min": 4, "max": 12, "step": 1, "label": "Products to show", "default": 8 },
-    { "type": "checkbox", "id": "show_rating", "label": "Show rating metafields", "info": "Uses reviews.rating and reviews.rating_count when available.", "default": true }
+    { "type": "checkbox", "id": "show_rating", "label": "Show rating metafields", "info": "Uses reviews.rating or custom.rating, plus the matching rating_count field when available.", "default": true }
   ],
   "presets": [{ "name": "Purelane product grid" }]
 }

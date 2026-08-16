@@ -10,7 +10,23 @@
         "announcement_3": { "type": "announcement", "settings": { "text": "Loved by", "highlight": "30,000+ happy homes" } }
       },
       "block_order": ["announcement_1", "announcement_2", "announcement_3"],
-      "settings": { "brand_name": "Purelane", "tagline": "Clean, simply", "menu": "main-menu", "show_ticker": true }
+      "settings": {
+        "brand_name": "Purelane",
+        "tagline": "Clean, simply",
+        "navigation_source": "settings",
+        "menu": "main-menu",
+        "navigation_label_1": "Home",
+        "navigation_link_1": "/",
+        "navigation_label_2": "Ingredients",
+        "navigation_link_2": "/#ingredients",
+        "navigation_label_3": "How it works",
+        "navigation_link_3": "/#how",
+        "navigation_label_4": "Shop",
+        "navigation_link_4": "/#shop",
+        "navigation_label_5": "Bundles",
+        "navigation_link_5": "/#bundles",
+        "show_ticker": true
+      }
     }
   },
   "order": ["purelane_header"]

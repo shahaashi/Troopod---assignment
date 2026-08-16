@@ -6,9 +6,9 @@
         "offer_1": { "type": "slide", "settings": { "offer_label": "Single bottle", "saving_text": "33% off" } },
         "offer_2": { "type": "slide", "settings": { "offer_label": "Any 2 products", "saving_text": "Save more" } },
         "offer_3": { "type": "slide", "settings": { "offer_label": "Any 3 products", "saving_text": "Best value" } },
-        "trust_1": { "type": "trust", "settings": { "text": "Plant powered" } },
-        "trust_2": { "type": "trust", "settings": { "text": "Safe for kids & pets" } },
-        "trust_3": { "type": "trust", "settings": { "text": "Zero harsh chemicals" } }
+        "trust_1": { "type": "trust", "settings": { "icon": "leaf", "text": "Plant powered" } },
+        "trust_2": { "type": "trust", "settings": { "icon": "shield", "text": "Safe for kids & pets" } },
+        "trust_3": { "type": "trust", "settings": { "icon": "clear", "text": "Zero harsh chemicals" } }
       },
       "block_order": ["offer_1", "offer_2", "offer_3", "trust_1", "trust_2", "trust_3"],
       "settings": {
@@ -19,6 +19,7 @@
         "primary_link": "#shop",
         "secondary_label": "How it works",
         "secondary_link": "#combos",
+        "fallback_collection": "all",
         "autoplay_speed": 4,
         "slider_label": "Featured product offers",
         "slider_controls_label": "Choose a featured offer",

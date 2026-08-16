@@ -1,6 +1,13 @@
 {{ 'purelane.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'purelane-header.js' | asset_url }}" defer="defer"></script>
 
+{%- liquid
+  assign use_custom_navigation = true
+  if section.settings.navigation_source == 'menu'
+    assign use_custom_navigation = false
+  endif
+-%}
+
 <purelane-site-header class="pl-chrome{% if section.settings.show_ticker %} pl-chrome--ticker{% endif %}">
   {%- if section.settings.show_ticker -%}
     <div class="pl-ticker" aria-label="Store announcements">
@@ -34,9 +41,21 @@
         </span>
       </a>
 
-      {%- if section.settings.menu != blank -%}
+      {%- if use_custom_navigation or section.settings.menu != blank -%}
         <nav class="pl-nav" aria-label="Primary navigation">
-          {%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
+          {%- if use_custom_navigation -%}
+            {%- for navigation_index in (1..5) -%}
+              {%- liquid
+                assign label_id = 'navigation_label_' | append: navigation_index
+                assign link_id = 'navigation_link_' | append: navigation_index
+                assign navigation_label = section.settings[label_id]
+                assign navigation_link = section.settings[link_id] | default: routes.root_url
+              -%}
+              {%- if navigation_label != blank -%}<a href="{{ navigation_link }}">{{ navigation_label | escape }}</a>{%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
+          {%- endif -%}
         </nav>
       {%- endif -%}
 
@@ -44,10 +63,24 @@
         <a class="pl-nav-icon pl-nav-icon--optional" href="{{ routes.search_url }}" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
         {%- if shop.customer_accounts_enabled -%}<a class="pl-nav-icon pl-nav-icon--optional" href="{{ routes.account_url }}" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6"/></svg></a>{%- endif -%}
         <a class="pl-nav-icon" href="{{ routes.cart_url }}" aria-label="Cart, {{ cart.item_count }} items"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l2.2 10.4a1.6 1.6 0 0 0 1.6 1.3h7.6a1.6 1.6 0 0 0 1.6-1.3L20.5 9H6.4"/><circle cx="10" cy="20.5" r="1.1"/><circle cx="17.5" cy="20.5" r="1.1"/></svg><span class="pl-cart-count" aria-hidden="true">{{ cart.item_count }}</span></a>
-        {%- if section.settings.menu != blank -%}
+        {%- if use_custom_navigation or section.settings.menu != blank -%}
           <details class="pl-mobile-menu">
             <summary class="pl-nav-icon" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></summary>
-            <nav class="pl-mobile-menu__panel" aria-label="Mobile navigation">{%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}</nav>
+            <nav class="pl-mobile-menu__panel" aria-label="Mobile navigation">
+              {%- if use_custom_navigation -%}
+                {%- for navigation_index in (1..5) -%}
+                  {%- liquid
+                    assign label_id = 'navigation_label_' | append: navigation_index
+                    assign link_id = 'navigation_link_' | append: navigation_index
+                    assign navigation_label = section.settings[label_id]
+                    assign navigation_link = section.settings[link_id] | default: routes.root_url
+                  -%}
+                  {%- if navigation_label != blank -%}<a href="{{ navigation_link }}">{{ navigation_label | escape }}</a>{%- endif -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- for link in section.settings.menu.links -%}<a href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
+              {%- endif -%}
+            </nav>
           </details>
         {%- endif -%}
       </div>
@@ -64,17 +97,40 @@
     { "type": "image_picker", "id": "logo", "label": "Logo" },
     { "type": "text", "id": "brand_name", "label": "Brand name", "default": "Purelane" },
     { "type": "text", "id": "tagline", "label": "Tagline", "default": "Clean, simply" },
+    {
+      "type": "select",
+      "id": "navigation_source",
+      "label": "Navigation source",
+      "options": [
+        { "value": "settings", "label": "Editable links below" },
+        { "value": "menu", "label": "Shopify menu" }
+      ],
+      "default": "settings"
+    },
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "header", "content": "Editable navigation links" },
+    { "type": "text", "id": "navigation_label_1", "label": "Link 1 label", "default": "Home" },
+    { "type": "url", "id": "navigation_link_1", "label": "Link 1" },
+    { "type": "text", "id": "navigation_label_2", "label": "Link 2 label", "default": "Ingredients" },
+    { "type": "url", "id": "navigation_link_2", "label": "Link 2" },
+    { "type": "text", "id": "navigation_label_3", "label": "Link 3 label", "default": "How it works" },
+    { "type": "url", "id": "navigation_link_3", "label": "Link 3" },
+    { "type": "text", "id": "navigation_label_4", "label": "Link 4 label", "default": "Shop" },
+    { "type": "url", "id": "navigation_link_4", "label": "Link 4" },
+    { "type": "text", "id": "navigation_label_5", "label": "Link 5 label", "default": "Bundles" },
+    { "type": "url", "id": "navigation_link_5", "label": "Link 5" },
     { "type": "checkbox", "id": "show_ticker", "label": "Show announcement ticker", "default": true }
   ],
-  "blocks": [{
-    "type": "announcement",
-    "name": "Announcement",
-    "settings": [
-      { "type": "text", "id": "text", "label": "Text", "default": "Free shipping" },
-      { "type": "text", "id": "highlight", "label": "Highlighted text", "default": "on every bundle across India" }
-    ]
-  }],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping" },
+        { "type": "text", "id": "highlight", "label": "Highlighted text", "default": "on every bundle across India" }
+      ]
+    }
+  ],
   "presets": [{
     "name": "Purelane header",
     "blocks": [

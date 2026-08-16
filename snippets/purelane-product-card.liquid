@@ -10,8 +10,12 @@
   if card_badge == blank and product.metafields.custom.badge != blank
     assign card_badge = product.metafields.custom.badge.value
   endif
-  assign rating_value = product.metafields.reviews.rating.value.rating
-  assign rating_count = product.metafields.reviews.rating_count.value
+  assign rating_metafield = product.metafields.reviews.rating
+  if rating_metafield == blank
+    assign rating_metafield = product.metafields.custom.rating
+  endif
+  assign rating_value = rating_metafield.value.rating | default: rating_metafield.value
+  assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.rating_count.value
   assign discount_percent = 0
   assign product_form_id = 'PurelaneCardForm-' | append: section_id | append: '-' | append: index
   if selected_variant.compare_at_price > selected_variant.price
@@ -33,7 +37,7 @@
   <div class="pl-product-card__body">
     <h3 class="pl-product-card__title"><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
     {%- if show_rating -%}
-      <div class="pl-rating" aria-label="{% if rating_value != blank %}Rated {{ rating_value }} out of 5 from {{ rating_count }} reviews{% else %}No reviews yet{% endif %}">
+      <div class="pl-rating" aria-label="{% if rating_value != blank %}Rated {{ rating_value }} out of 5{% if rating_count != blank %} from {{ rating_count }} reviews{% endif %}{% else %}No reviews yet{% endif %}">
         <b aria-hidden="true">★ {% if rating_value != blank %}{{ rating_value }}{% else %}—{% endif %}</b>
         {%- if rating_count != blank -%}<span aria-hidden="true">· {{ rating_count }} reviews</span>{%- endif -%}
       </div>

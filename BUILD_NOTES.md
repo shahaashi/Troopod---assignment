@@ -24,8 +24,8 @@ Recommended product metafield definitions:
 | --- | --- | --- |
 | `custom.badge` | Single line text | Optional product-card badge such as “Best seller” |
 | `custom.bundle_quantity` | Integer | Optional bundle-tier quantity; falls back to the section block setting |
-| `reviews.rating` | Rating | Standard rating shown by product cards |
-| `reviews.rating_count` | Integer | Standard rating count shown by product cards |
+| `reviews.rating` or `custom.rating` | Rating | Product rating shown by product cards; the standard namespace takes priority |
+| `reviews.rating_count` or `custom.rating_count` | Integer | Optional rating count shown by product cards |
 
 Review-rail content is managed with section blocks because it is homepage presentation content. Product-specific ratings use Shopify's standard review metafields. If reviews need to be reused across multiple templates, migrate the review fields to a `customer_review` metaobject and connect the section settings as dynamic sources.
 

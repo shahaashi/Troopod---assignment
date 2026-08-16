@@ -41,6 +41,7 @@
         {%- if section.settings.primary_label != blank -%}
           <a class="purelane-button purelane-button--primary" href="{{ section.settings.primary_link | default: '#shop' }}">
             {{ section.settings.primary_label | escape }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6"/></svg>
           </a>
         {%- endif -%}
         {%- if section.settings.secondary_label != blank -%}
@@ -52,39 +53,59 @@
 
     </div>
 
+    {%- liquid
+      assign fallback_collection = section.settings.fallback_collection
+      if fallback_collection == blank
+        assign fallback_collection = collections.all
+      endif
+    -%}
     <div class="purelane-hero__slider" role="region" aria-label="{{ section.settings.slider_label | escape }}">
       {%- assign slide_index = 0 -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'slide' -%}
           {%- liquid
             assign slide_index = slide_index | plus: 1
-            assign first_product = block.settings.product_1
+            assign first_product = block.settings.product_1 | default: fallback_collection.products[0]
+            assign second_product = block.settings.product_2 | default: fallback_collection.products[1]
+            assign third_product = block.settings.product_3 | default: fallback_collection.products[2]
             assign offer_product = block.settings.offer_product | default: first_product
             assign loading_strategy = 'lazy'
             if slide_index == 1
               assign loading_strategy = 'eager'
             endif
             assign product_count = 0
-            if block.settings.product_1 != blank
+            if first_product != blank
               assign product_count = product_count | plus: 1
             endif
-            if block.settings.product_2 != blank
+            if second_product != blank and slide_index > 1
               assign product_count = product_count | plus: 1
             endif
-            if block.settings.product_3 != blank
+            if third_product != blank and slide_index > 2
               assign product_count = product_count | plus: 1
             endif
           -%}
           <div
             class="purelane-hero__slide"
             data-purelane-slide
+            data-product-count="{{ product_count }}"
             aria-hidden="{% if slide_index == 1 %}false{% else %}true{% endif %}"
             {{ block.shopify_attributes }}
           >
             <div class="purelane-hero__products">
               {%- for product_position in (1..3) -%}
-                {%- assign product_setting = 'product_' | append: product_position -%}
-                {%- assign featured_product = block.settings[product_setting] -%}
+                {%- liquid
+                  case product_position
+                    when 1
+                      assign featured_product = first_product
+                    when 2
+                      assign featured_product = second_product
+                    when 3
+                      assign featured_product = third_product
+                  endcase
+                  if product_position > slide_index
+                    assign featured_product = blank
+                  endif
+                -%}
                 {%- if featured_product != blank -%}
                   {%- assign product_image_alt = featured_product.featured_image.alt | default: featured_product.title -%}
                   <a class="purelane-hero__product" href="{{ featured_product.url }}" tabindex="{% if slide_index == 1 %}0{% else %}-1{% endif %}">
@@ -111,24 +132,20 @@
               {%- endif -%}
             </div>
 
-            <div class="purelane-hero__offer">
+            {%- if offer_product != blank -%}<div class="purelane-hero__offer">
               <span class="purelane-hero__offer-label">
                 {{ block.settings.offer_label | default: offer_product.title | default: 'Choose products' | escape }}
               </span>
               <span class="purelane-hero__offer-price">
-                {%- if offer_product != blank -%}
-                  {{ offer_product.price | money }}
-                  {%- if offer_product.compare_at_price > offer_product.price -%}
-                    <span class="purelane-hero__offer-compare">{{ offer_product.compare_at_price | money }}</span>
-                  {%- endif -%}
-                {%- else -%}
-                  <span class="purelane-hero__offer-empty">Select products</span>
+                {{ offer_product.price | money }}
+                {%- if offer_product.compare_at_price > offer_product.price -%}
+                  <span class="purelane-hero__offer-compare">{{ offer_product.compare_at_price | money }}</span>
                 {%- endif -%}
               </span>
               {%- if block.settings.saving_text != blank -%}
                 <span class="purelane-hero__offer-saving">{{ block.settings.saving_text | escape }}</span>
               {%- endif -%}
-            </div>
+            </div>{%- endif -%}
           </div>
         {%- endif -%}
       {%- endfor -%}
@@ -157,7 +174,16 @@
     <div class="purelane-hero__trust" aria-label="{{ section.settings.trust_label | escape }}">
       {%- for block in section.blocks -%}
         {%- if block.type == 'trust' and block.settings.text != blank -%}
-          <span class="purelane-hero__trust-item" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</span>
+          <span class="purelane-hero__trust-item" {{ block.shopify_attributes }}>
+            <span class="purelane-hero__trust-icon" aria-hidden="true">
+              {%- case block.settings.icon -%}
+                {%- when 'shield' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6.2c0 4.3 3.1 7.6 7.5 8.8 4.4-1.2 7.5-4.5 7.5-8.8V6L12 3Z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+                {%- when 'clear' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M6.4 17.6 17.6 6.4"/></svg>
+                {%- else -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6.5 3.5-11 8-12.5C20 15 16.5 20 12 21Z"/><path d="M12 21C12 14.5 8.5 10 4 8.5 4 15 7.5 20 12 21Z"/></svg>
+              {%- endcase -%}
+            </span>
+            <span>{{ block.settings.text | escape }}</span>
+          </span>
         {%- endif -%}
       {%- endfor -%}
     </div>
@@ -223,6 +249,12 @@
       "content": "Slider"
     },
     {
+      "type": "collection",
+      "id": "fallback_collection",
+      "label": "Fallback product collection",
+      "info": "Used when a slide does not have products selected. Product images and prices still come from Shopify."
+    },
+    {
       "type": "range",
       "id": "autoplay_speed",
       "min": 3,
@@ -257,6 +289,17 @@
       "name": "Product offer",
       "limit": 3,
       "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "clear", "label": "No harsh chemicals" }
+          ],
+          "default": "leaf"
+        },
         {
           "type": "product",
           "id": "offer_product",
