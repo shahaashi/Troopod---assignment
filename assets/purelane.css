@@ -654,3 +654,185 @@
   .pl-review-viewport { mask-image: none; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-mask-image: none; }
   .pl-review-card { scroll-snap-align: start; }
 }
+
+/* Reference V2 palette -------------------------------------------------------
+   The prototype intentionally defines this light brand pass after V1. These
+   overrides reproduce the final cascade while keeping the component geometry
+   and Shopify data bindings above unchanged. */
+.purelane-section,
+.pl-section {
+  --pl-ink: #f4f0fb;
+  --pl-paper: #241a3d;
+  --pl-paper-2: rgba(36, 26, 61, 0.78);
+  --pl-paper-3: rgba(36, 26, 61, 0.56);
+  --pl-surface: #17102b;
+  --pl-accent: #b8701c;
+  --pl-accent-2: #c9761d;
+  color: var(--pl-paper);
+}
+
+.purelane-hero {
+  background:
+    radial-gradient(80% 55% at 72% 24%, rgba(255, 255, 255, 0.5), transparent 62%),
+    linear-gradient(178deg, #fbfffb 0%, #eafaec 24%, #d6f1dc 54%, #bfe8ca 100%);
+}
+
+.purelane-hero::before {
+  background: linear-gradient(102deg, rgba(255,255,255,.80) 0%, rgba(255,255,255,.50) 30%, rgba(255,255,255,.12) 54%, transparent 68%);
+}
+
+.purelane-hero::after {
+  background:
+    radial-gradient(circle at 18% 30%, rgba(75,58,143,.10) 0 2px, transparent 3px),
+    radial-gradient(circle at 87% 44%, rgba(75,58,143,.12) 0 3px, transparent 4px),
+    radial-gradient(circle at 70% 18%, rgba(75,58,143,.08) 0 5px, transparent 6px),
+    radial-gradient(126% 88% at 50% 26%, transparent 42%, rgba(75,58,143,.07) 80%, rgba(0,80,74,.16) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.40) 0%, transparent 20%, transparent 70%, rgba(0,84,78,.10) 100%);
+}
+
+.purelane-hero__title { color: #17102b; text-shadow: none; }
+.purelane-hero__title em { color: #c27318; }
+.purelane-hero__eyebrow { color: rgba(36,26,61,.56); }
+.purelane-hero__text { color: rgba(36,26,61,.78); }
+.purelane-hero__rule i { background: linear-gradient(90deg, rgba(75,58,143,.34), transparent); }
+.purelane-hero__rule svg { color: #b8701c; }
+
+.purelane-button--primary,
+.pl-button--primary {
+  background: linear-gradient(135deg, #00706a, #004b46);
+  box-shadow: 0 12px 26px rgba(0,80,74,.26), inset 0 1px 0 rgba(255,255,255,.22);
+  color: #f4fdf6;
+}
+
+.purelane-button--primary:hover,
+.pl-button--primary:hover:not(:disabled) {
+  box-shadow: 0 18px 36px rgba(0,80,74,.32), inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+.purelane-button--secondary,
+.pl-button--ghost {
+  background: rgba(255,255,255,.66);
+  border-color: rgba(75,58,143,.22);
+  color: #01423b;
+}
+
+.purelane-button--secondary:hover,
+.pl-button--ghost:hover:not(:disabled) { background: rgba(255,255,255,.9); }
+
+.purelane-button:focus-visible,
+.purelane-hero__dot:focus-visible,
+.pl-button:focus-visible,
+.pl-section a:focus-visible,
+.pl-section button:focus-visible { outline-color: #4f7d10; }
+
+.purelane-hero__trust {
+  background: linear-gradient(158deg, rgba(255,255,255,.66), rgba(236,230,247,.44));
+  border-color: rgba(75,58,143,.13);
+  box-shadow: 0 16px 38px rgba(58,44,112,.10), inset 0 1px 0 rgba(255,255,255,.86);
+}
+
+.purelane-hero__trust-item { color: rgba(36,26,61,.78); }
+.purelane-hero__trust-item + .purelane-hero__trust-item { border-top-color: rgba(75,58,143,.12); }
+.purelane-hero__slider { filter: drop-shadow(0 14px 22px rgba(0,74,66,.15)); }
+
+.purelane-hero__offer {
+  background: linear-gradient(158deg, rgba(255,255,255,.80), rgba(236,230,247,.56));
+  border-color: rgba(75,58,143,.16);
+  box-shadow: 0 16px 38px rgba(58,44,112,.10), inset 0 1px 0 rgba(255,255,255,.86);
+}
+
+.purelane-hero__offer-label { color: rgba(36,26,61,.56); }
+.purelane-hero__offer-price { color: #17102b; }
+.purelane-hero__offer-compare { color: rgba(36,26,61,.42); }
+.purelane-hero__offer-saving { color: #4f7d10; }
+.purelane-hero__dot { background: rgba(75,58,143,.22); }
+.purelane-hero__dot[aria-current='true'] { background: #b8701c; }
+.purelane-hero__toggle { background: rgba(255,255,255,.62); border-color: rgba(75,58,143,.18); color: #01423b; }
+
+.pl-section {
+  background: linear-gradient(178deg, #f0fbf2 0%, #d9f2df 28%, #bde6c8 60%, #a2d9b6 100%);
+}
+
+.pl-reviews {
+  background: linear-gradient(178deg, #fbfffb 0%, #eafaec 24%, #d6f1dc 54%, #bfe8ca 100%);
+}
+
+.pl-display,
+.pl-product-card__title,
+.pl-combo__title,
+.pl-tier__qty,
+.pl-review-card__title { color: #17102b; }
+
+.pl-kicker,
+.pl-heading__description,
+.pl-product-card__title + *,
+.pl-combo__description,
+.pl-tier__note,
+.pl-tier__benefits li,
+.pl-review-card__quote,
+.pl-review-aggregate,
+.pl-review-card__who { color: var(--pl-paper-2); }
+
+.pl-leaf-rule i { background: linear-gradient(90deg, transparent, rgba(75,58,143,.34)); }
+.pl-leaf-rule svg { color: #b8701c; }
+
+.pl-glass,
+.pl-glass-subtle {
+  background: linear-gradient(158deg, rgba(255,255,255,.80), rgba(236,230,247,.56) 58%, rgba(222,212,240,.50));
+  border-color: rgba(75,58,143,.16);
+  box-shadow: 0 22px 54px rgba(58,44,112,.13), inset 0 1px 0 rgba(255,255,255,.92);
+}
+
+.pl-glass::after,
+.pl-glass-subtle::after { background: linear-gradient(115deg, rgba(255,255,255,.55), transparent 32%, transparent 74%, rgba(201,118,29,.06)); }
+
+.pl-product-card__media,
+.pl-tier__media { background: linear-gradient(160deg, rgba(255,255,255,.60), rgba(236,230,247,.42)); border-color: rgba(75,58,143,.10); }
+.pl-combo__tray { background: linear-gradient(162deg, rgba(255,255,255,.56), rgba(236,230,247,.34)); border-bottom-color: rgba(75,58,143,.12); }
+.pl-product-card__image,
+.pl-combo__image,
+.pl-tier__image { filter: drop-shadow(0 8px 13px rgba(0,74,66,.13)); }
+.pl-media-placeholder { color: rgba(75,58,143,.34); }
+
+.pl-pill,
+.pl-combo__save {
+  background: rgba(255,255,255,.86);
+  border-color: rgba(201,118,29,.34);
+  color: #4f7d10;
+}
+.pl-combo__flag { background: linear-gradient(135deg, #00706a, #004b46); color: #f4fdf6; }
+.pl-combo__item,
+.pl-combo__fine,
+.pl-combo__count,
+.pl-rail-cue,
+.pl-rail-note { color: var(--pl-paper-3); }
+.pl-combo__plus,
+.pl-rail-cue svg { color: #b8701c; }
+.pl-combo__price strong,
+.pl-price strong { color: #17102b; }
+.pl-combo__price s,
+.pl-price s { color: rgba(36,26,61,.42); }
+.pl-combo__saving,
+.pl-tier__tag {
+  background: rgba(201,118,29,.14);
+  border-color: rgba(201,118,29,.34);
+  color: #4f7d10;
+}
+.pl-price em { color: #4f7d10; }
+.pl-combo--featured,
+.pl-tier--featured { border-color: rgba(201,118,29,.46); box-shadow: 0 22px 54px rgba(58,44,112,.14), 0 0 0 1px rgba(201,118,29,.24), inset 0 1px 0 rgba(255,255,255,.92); }
+.pl-tier__qty small { color: var(--pl-paper-3); }
+.pl-tier__price { color: #b8701c; }
+.pl-tier__price s { color: rgba(36,26,61,.42); }
+.pl-tier__benefits svg { color: #4f7d10; }
+
+.pl-stars,
+.pl-rating b { color: #7a9c1e; }
+.pl-rating { color: var(--pl-paper-2); }
+.pl-review-aggregate b { color: #c27318; }
+.pl-review-card__who b { color: #01423b; }
+.pl-review-card__who svg { color: #4f7d10; }
+
+@media screen and (max-width: 900px) {
+  .purelane-hero::before { background: linear-gradient(180deg, rgba(255,255,255,.62) 0%, rgba(255,255,255,.34) 36%, rgba(255,255,255,.66) 100%); }
+}
