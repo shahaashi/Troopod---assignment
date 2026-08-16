@@ -1,0 +1,55 @@
+{%- comment -%}
+  Purelane product card used by product-led sections.
+
+  Accepts: product, section_id, index, badge, show_rating
+{%- endcomment -%}
+
+{%- liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign card_badge = badge
+  if card_badge == blank and product.metafields.custom.badge != blank
+    assign card_badge = product.metafields.custom.badge.value
+  endif
+  assign rating_value = product.metafields.reviews.rating.value.rating
+  assign rating_count = product.metafields.reviews.rating_count.value
+  assign discount_percent = 0
+  assign product_form_id = 'PurelaneCardForm-' | append: section_id | append: '-' | append: index
+  if selected_variant.compare_at_price > selected_variant.price
+    assign price_difference = selected_variant.compare_at_price | minus: selected_variant.price
+    assign discount_percent = price_difference | times: 100.0 | divided_by: selected_variant.compare_at_price | round
+  endif
+-%}
+
+<article class="pl-glass pl-product-card" data-pl-reveal style="--pl-delay: {{ index | modulo: 4 | times: 90 }}ms;">
+  <a class="pl-product-card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+    {%- if card_badge != blank -%}<span class="pl-pill">{{ card_badge | escape }}</span>{%- endif -%}
+    {% render 'purelane-product-media',
+      product: product,
+      loading: 'lazy',
+      sizes: '(max-width: 749px) calc(50vw - 35px), (max-width: 1099px) calc(33vw - 40px), 255px',
+      media_class: 'pl-product-card__image'
+    %}
+  </a>
+  <div class="pl-product-card__body">
+    <h3 class="pl-product-card__title"><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+    {%- if show_rating -%}
+      <div class="pl-rating" aria-label="{% if rating_value != blank %}Rated {{ rating_value }} out of 5 from {{ rating_count }} reviews{% else %}No reviews yet{% endif %}">
+        <b aria-hidden="true">★ {% if rating_value != blank %}{{ rating_value }}{% else %}—{% endif %}</b>
+        {%- if rating_count != blank -%}<span aria-hidden="true">· {{ rating_count }} reviews</span>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="pl-price">
+      <strong>{{ selected_variant.price | money }}</strong>
+      {%- if selected_variant.compare_at_price > selected_variant.price -%}
+        <s>{{ selected_variant.compare_at_price | money }}</s>
+        <em>{{ discount_percent }}% off</em>
+      {%- endif -%}
+    </div>
+    {%- form 'product', product, id: product_form_id, class: 'pl-product-card__form' -%}
+      <input type="hidden" name="id" value="{{ selected_variant.id }}">
+      <button class="pl-button pl-button--ghost pl-button--small" type="submit" name="add"{% unless selected_variant.available %} disabled{% endunless %}>
+        {%- if selected_variant.available -%}Add to cart{%- else -%}Sold out{%- endif -%}
+      </button>
+    {%- endform -%}
+  </div>
+</article>

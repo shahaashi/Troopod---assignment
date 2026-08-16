@@ -1,0 +1,353 @@
+{{ 'purelane.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'purelane-hero.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign heading_parts = section.settings.heading | split: '['
+  assign heading_before = heading_parts.first | escape | replace: '|', '<br>'
+  assign heading_emphasis = ''
+  assign heading_after = ''
+  if heading_parts.size > 1
+    assign emphasis_parts = heading_parts[1] | split: ']'
+    assign heading_emphasis = emphasis_parts.first
+    assign heading_after = emphasis_parts[1] | escape | replace: '|', '<br>'
+  endif
+-%}
+
+<purelane-hero
+  class="purelane-section purelane-hero"
+  data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+  aria-labelledby="PurelaneHeroHeading-{{ section.id }}"
+>
+  <div class="purelane-hero__inner">
+    <div class="purelane-hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="purelane-hero__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+      {%- endif -%}
+
+      <h1 class="purelane-hero__title" id="PurelaneHeroHeading-{{ section.id }}">
+        {{ heading_before }}{% if heading_emphasis != blank %}<em>{{ heading_emphasis | escape }}</em>{% endif %}{{ heading_after }}
+      </h1>
+
+      <span class="purelane-hero__rule" aria-hidden="true">
+        <i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-6.5 3.5-11 8-12.5C20 15 16.5 20 12 21Z"/><path d="M12 21C12 14.5 8.5 10 4 8.5 4 15 7.5 20 12 21Z"/></svg><i></i>
+      </span>
+
+      {%- if section.settings.text != blank -%}
+        <div class="purelane-hero__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      <div class="purelane-hero__actions">
+        {%- if section.settings.primary_label != blank -%}
+          <a class="purelane-button purelane-button--primary" href="{{ section.settings.primary_link | default: '#shop' }}">
+            {{ section.settings.primary_label | escape }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.secondary_label != blank -%}
+          <a class="purelane-button purelane-button--secondary" href="{{ section.settings.secondary_link | default: '#combos' }}">
+            {{ section.settings.secondary_label | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+
+    </div>
+
+    <div class="purelane-hero__slider" role="region" aria-label="{{ section.settings.slider_label | escape }}">
+      {%- assign slide_index = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'slide' -%}
+          {%- liquid
+            assign slide_index = slide_index | plus: 1
+            assign first_product = block.settings.product_1
+            assign offer_product = block.settings.offer_product | default: first_product
+            assign loading_strategy = 'lazy'
+            if slide_index == 1
+              assign loading_strategy = 'eager'
+            endif
+            assign product_count = 0
+            if block.settings.product_1 != blank
+              assign product_count = product_count | plus: 1
+            endif
+            if block.settings.product_2 != blank
+              assign product_count = product_count | plus: 1
+            endif
+            if block.settings.product_3 != blank
+              assign product_count = product_count | plus: 1
+            endif
+          -%}
+          <div
+            class="purelane-hero__slide"
+            data-purelane-slide
+            aria-hidden="{% if slide_index == 1 %}false{% else %}true{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="purelane-hero__products">
+              {%- for product_position in (1..3) -%}
+                {%- assign product_setting = 'product_' | append: product_position -%}
+                {%- assign featured_product = block.settings[product_setting] -%}
+                {%- if featured_product != blank -%}
+                  {%- assign product_image_alt = featured_product.featured_image.alt | default: featured_product.title -%}
+                  <a class="purelane-hero__product" href="{{ featured_product.url }}" tabindex="{% if slide_index == 1 %}0{% else %}-1{% endif %}">
+                    {%- if featured_product.featured_image != blank -%}
+                      {{ featured_product.featured_image
+                        | image_url: width: 620
+                        | image_tag:
+                          loading: loading_strategy,
+                          widths: '180, 260, 360, 480, 620',
+                          sizes: '(max-width: 520px) 38vw, (max-width: 900px) 200px, 230px',
+                          alt: product_image_alt
+                      }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'purelane-hero__placeholder' }}
+                    {%- endif -%}
+                    <span class="visually-hidden">{{ featured_product.title | escape }}</span>
+                  </a>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if product_count == 0 -%}
+                {{ 'product-1' | placeholder_svg_tag: 'purelane-hero__product purelane-hero__placeholder' }}
+              {%- endif -%}
+            </div>
+
+            <div class="purelane-hero__offer">
+              <span class="purelane-hero__offer-label">
+                {{ block.settings.offer_label | default: offer_product.title | default: 'Choose products' | escape }}
+              </span>
+              <span class="purelane-hero__offer-price">
+                {%- if offer_product != blank -%}
+                  {{ offer_product.price | money }}
+                  {%- if offer_product.compare_at_price > offer_product.price -%}
+                    <span class="purelane-hero__offer-compare">{{ offer_product.compare_at_price | money }}</span>
+                  {%- endif -%}
+                {%- else -%}
+                  <span class="purelane-hero__offer-empty">Select products</span>
+                {%- endif -%}
+              </span>
+              {%- if block.settings.saving_text != blank -%}
+                <span class="purelane-hero__offer-saving">{{ block.settings.saving_text | escape }}</span>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if slide_index > 1 -%}
+        <div class="purelane-hero__dots" aria-label="{{ section.settings.slider_controls_label | escape }}">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'slide' -%}
+              <button
+                class="purelane-hero__dot"
+                type="button"
+                data-purelane-dot
+                aria-label="Show offer {{ forloop.index }}"
+                aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+              ></button>
+            {%- endif -%}
+          {%- endfor -%}
+          <button class="purelane-hero__toggle" type="button" data-purelane-toggle aria-label="Pause offer rotation" aria-pressed="false">
+            <span class="purelane-hero__pause-icon" aria-hidden="true">Ⅱ</span>
+            <span class="purelane-hero__play-icon" aria-hidden="true">▶</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="purelane-hero__trust" aria-label="{{ section.settings.trust_label | escape }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'trust' and block.settings.text != blank -%}
+          <span class="purelane-hero__trust-item" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</span>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</purelane-hero>
+
+{% schema %}
+{
+  "name": "Purelane hero",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Wrap the highlighted word in square brackets, for example [clean].",
+      "default": "Clean|That|[Lasts]"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Homecare that works on the toughest grime, made from plants. Kind to your home, your family and the world outside it.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label",
+      "default": "How it works"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3,
+      "max": 9,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay speed",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "slider_label",
+      "label": "Slider accessible label",
+      "default": "Featured product offers"
+    },
+    {
+      "type": "text",
+      "id": "slider_controls_label",
+      "label": "Slider controls accessible label",
+      "default": "Choose a featured offer"
+    },
+    {
+      "type": "text",
+      "id": "trust_label",
+      "label": "Trust badges accessible label",
+      "default": "Why customers choose Purelane"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Product offer",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "product",
+          "id": "offer_product",
+          "label": "Offer product",
+          "info": "Price and compare-at price come from this product. Leave blank to use Product 1."
+        },
+        {
+          "type": "product",
+          "id": "product_1",
+          "label": "Product 1"
+        },
+        {
+          "type": "product",
+          "id": "product_2",
+          "label": "Product 2"
+        },
+        {
+          "type": "product",
+          "id": "product_3",
+          "label": "Product 3"
+        },
+        {
+          "type": "text",
+          "id": "offer_label",
+          "label": "Offer label",
+          "default": "Featured offer"
+        },
+        {
+          "type": "text",
+          "id": "saving_text",
+          "label": "Saving text",
+          "default": "Save more"
+        }
+      ]
+    },
+    {
+      "type": "trust",
+      "name": "Trust badge",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Plant based"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Purelane hero",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "offer_label": "Single bottle",
+            "saving_text": "33% off"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "offer_label": "Any 2 products",
+            "saving_text": "Save more"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "offer_label": "Any 3 products",
+            "saving_text": "Best value"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Plant based"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Cruelty free"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Made in India"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

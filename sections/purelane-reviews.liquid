@@ -1,0 +1,75 @@
+{{ 'purelane.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'purelane.js' | asset_url }}" defer="defer"></script>
+
+<purelane-section class="pl-section pl-reviews" id="reviews" aria-labelledby="PurelaneReviewsHeading-{{ section.id }}">
+  <div class="pl-wrap">
+    <div class="pl-review-head" data-pl-reveal>
+      <h2 class="pl-kicker" id="PurelaneReviewsHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      <span class="pl-review-aggregate"><span class="pl-stars" aria-hidden="true">★★★★★</span><b>{{ section.settings.rating }}</b> from {{ section.settings.review_count | escape }} reviews</span>
+      <span class="pl-review-aggregate">Loved by <b>{{ section.settings.customer_count | escape }}</b> homes</span>
+    </div>
+  </div>
+  <div class="pl-review-viewport" role="region" aria-label="{{ section.settings.rail_label | escape }}" tabindex="0" data-pl-reveal>
+    <div class="pl-review-track{% if section.settings.autoplay and section.blocks.size > 1 %} is-animated{% endif %}" style="--pl-duration: {{ section.settings.speed }}s;">
+      {%- for copy_index in (1..2) -%}
+        <div class="contents"{% if copy_index == 2 %} aria-hidden="true"{% endif %}>
+          {%- for block in section.blocks -%}
+            <article class="pl-glass-subtle pl-review-card"{% if copy_index == 1 %} {{ block.shopify_attributes }}{% endif %}>
+              <div class="pl-stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                {%- for star in (1..5) -%}<span aria-hidden="true">{% if star <= block.settings.rating %}★{% else %}☆{% endif %}</span>{%- endfor -%}
+              </div>
+              <h3 class="pl-review-card__title">{{ block.settings.title | escape }}</h3>
+              <blockquote class="pl-review-card__quote">{{ block.settings.quote | escape }}</blockquote>
+              <div class="pl-review-card__who">
+                {%- if block.settings.verified -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-label="Verified buyer"><path d="m5 13 4 4L19 7"/></svg>{%- endif -%}
+                <b>{{ block.settings.author | escape }}</b>
+                {%- if block.settings.product != blank -%}<span>· {{ block.settings.product.title | escape }}</span>{%- elsif block.settings.product_name != blank -%}<span>· {{ block.settings.product_name | escape }}</span>{%- endif -%}
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</purelane-section>
+
+{% schema %}
+{
+  "name": "Purelane reviews rail",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 12,
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "That's what they said" },
+    { "type": "text", "id": "rating", "label": "Aggregate rating", "default": "4.8" },
+    { "type": "text", "id": "review_count", "label": "Review count", "default": "8,000+" },
+    { "type": "text", "id": "customer_count", "label": "Customer count", "default": "12 lakh+" },
+    { "type": "text", "id": "rail_label", "label": "Accessible rail label", "default": "Customer reviews" },
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-scroll reviews", "default": true },
+    { "type": "range", "id": "speed", "min": 25, "max": 80, "step": 1, "unit": "s", "label": "Auto-scroll duration", "default": 52 }
+  ],
+  "blocks": [{
+    "type": "review",
+    "name": "Review",
+    "settings": [
+      { "type": "range", "id": "rating", "min": 1, "max": 5, "step": 1, "label": "Rating", "default": 5 },
+      { "type": "text", "id": "title", "label": "Title", "default": "Works like a charm" },
+      { "type": "textarea", "id": "quote", "label": "Review", "default": "Finally an eco option that cleans as well as the chemical cleaner I used for years." },
+      { "type": "text", "id": "author", "label": "Author", "default": "Verified buyer" },
+      { "type": "checkbox", "id": "verified", "label": "Show verified mark", "default": true },
+      { "type": "product", "id": "product", "label": "Reviewed product" },
+      { "type": "text", "id": "product_name", "label": "Fallback product name", "info": "Used only when no Shopify product is selected." }
+    ]
+  }],
+  "presets": [{
+    "name": "Purelane reviews rail",
+    "blocks": [
+      { "type": "review", "settings": { "title": "Works like a charm", "author": "Anita" } },
+      { "type": "review", "settings": { "title": "Smells clean, not chemical", "author": "Meera" } },
+      { "type": "review", "settings": { "title": "Dog friendly", "author": "Rohit S." } },
+      { "type": "review", "settings": { "title": "Sparkling taps again", "author": "Verified buyer" } }
+    ]
+  }]
+}
+{% endschema %}

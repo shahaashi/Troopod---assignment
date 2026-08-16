@@ -1,0 +1,32 @@
+{%- comment -%}
+  Shared product media with an intentional no-image state.
+
+  Accepts: product, loading, sizes, widths, media_class
+{%- endcomment -%}
+
+{%- liquid
+  assign media_loading = loading | default: 'lazy'
+  assign media_sizes = sizes | default: '(max-width: 749px) 45vw, 260px'
+  assign media_widths = widths | default: '165, 240, 330, 440, 550, 720'
+  assign image_alt = product.featured_image.alt | default: product.title
+-%}
+
+{%- if product != blank and product.featured_image != blank -%}
+  {{ product.featured_image
+    | image_url: width: 720
+    | image_tag:
+      loading: media_loading,
+      widths: media_widths,
+      sizes: media_sizes,
+      class: media_class,
+      alt: image_alt
+  }}
+{%- else -%}
+  <span class="pl-media-placeholder {{ media_class }}" aria-hidden="true">
+    <svg viewBox="0 0 96 120" fill="none">
+      <path d="M34 14h28v14l8 10v61c0 7-5 12-12 12H38c-7 0-12-5-12-12V38l8-10V14Z" stroke="currentColor" stroke-width="2"/>
+      <path d="M35 54h26M35 64h20" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+      <path d="M42 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </span>
+{%- endif -%}
