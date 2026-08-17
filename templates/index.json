@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "purelane_hero": {
@@ -21,9 +12,7 @@
             "product_2": "",
             "product_3": "",
             "offer_label": "Single bottle",
-            "saving_text": "33% off",
-            "discount_type": "none",
-            "discount_value": 0
+            "saving_text": "33% off"
           }
         },
         "offer_2": {
@@ -35,9 +24,7 @@
             "product_2": "",
             "product_3": "",
             "offer_label": "Any 2 products",
-            "saving_text": "Save more",
-            "discount_type": "none",
-            "discount_value": 0
+            "saving_text": "Save more"
           }
         },
         "offer_3": {
@@ -49,9 +36,7 @@
             "product_2": "kitchen-cleaner-foaming",
             "product_3": "tap-cleaner-limescale-remover",
             "offer_label": "Any 3 products",
-            "saving_text": "Best value",
-            "discount_type": "none",
-            "discount_value": 0
+            "saving_text": "Best value"
           }
         },
         "trust_1": {
@@ -172,8 +157,6 @@
           "settings": {
             "bundle_product": "",
             "title": "Kitchen Essentials",
-            "discount_type": "none",
-            "discount_value": 0,
             "product_1": "copper-bronze-brass-cleaner",
             "benefit_1": "",
             "product_2": "kitchen-cleaner-foaming",
@@ -193,8 +176,6 @@
           "settings": {
             "bundle_product": "",
             "title": "Laundry care bundle",
-            "discount_type": "none",
-            "discount_value": 0,
             "product_1": "",
             "benefit_1": "",
             "product_2": "",
@@ -214,8 +195,6 @@
           "settings": {
             "bundle_product": "",
             "title": "Complete home bundle",
-            "discount_type": "none",
-            "discount_value": 0,
             "product_1": "",
             "benefit_1": "",
             "product_2": "",
@@ -235,8 +214,6 @@
           "settings": {
             "bundle_product": "",
             "title": "Bathroom deep clean",
-            "discount_type": "none",
-            "discount_value": 0,
             "product_1": "",
             "benefit_1": "",
             "product_2": "",
@@ -277,8 +254,6 @@
             "label": "Starter",
             "product_count": 2,
             "quantity_label": "Products",
-            "discount_type": "none",
-            "discount_value": 0,
             "image_product_1": "copper-bronze-brass-cleaner",
             "image_product_2": "kitchen-cleaner-foaming",
             "image_product_3": "",
@@ -297,8 +272,6 @@
             "label": "Most popular",
             "product_count": 3,
             "quantity_label": "Products",
-            "discount_type": "none",
-            "discount_value": 0,
             "image_product_1": "tap-cleaner-limescale-remover",
             "image_product_2": "kitchen-cleaner-foaming",
             "image_product_3": "copper-bronze-brass-cleaner",
@@ -317,8 +290,6 @@
             "label": "Whole home",
             "product_count": 7,
             "quantity_label": "Products",
-            "discount_type": "fixed",
-            "discount_value": 395,
             "image_product_1": "",
             "image_product_2": "",
             "image_product_3": "",

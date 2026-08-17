@@ -36,21 +36,11 @@
             endif
           endfor
           if product_sum > 0
-            assign display_price = product_sum
-            assign display_compare_price = compare_sum
+            assign display_price = selected_variant.price
+            assign display_compare_price = product_sum
           else
             assign display_price = selected_variant.price
             assign display_compare_price = selected_variant.compare_at_price
-          endif
-          if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
-            assign discount_multiplier = 100 | minus: block.settings.discount_value
-            assign display_price = display_price | times: discount_multiplier | divided_by: 100
-          elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
-            assign discount_amount = block.settings.discount_value | times: 100
-            assign display_price = display_price | minus: discount_amount
-          endif
-          if display_price < 0
-            assign display_price = 0
           endif
         -%}
         <article class="pl-glass pl-tier{% if block.settings.featured %} pl-tier--featured{% endif %}" data-pl-reveal style="--pl-delay: {{ forloop.index0 | times: 90 }}ms; --pl-product-count: {{ product_count }};" {{ block.shopify_attributes }}>
@@ -120,8 +110,6 @@
       { "type": "text", "id": "label", "label": "Tier label", "default": "Starter" },
       { "type": "range", "id": "product_count", "min": 1, "max": 12, "step": 1, "label": "Product count", "info": "Controls the number of products displayed in this tier.", "default": 2 },
       { "type": "text", "id": "quantity_label", "label": "Quantity label", "default": "Products" },
-      { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "Use product price" }, { "value": "percentage", "label": "Percentage" }, { "value": "fixed", "label": "Fixed rupee amount" }], "default": "none" },
-      { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
       { "type": "product", "id": "image_product_1", "label": "Display product 1" },
       { "type": "product", "id": "image_product_2", "label": "Display product 2" },
       { "type": "product", "id": "image_product_3", "label": "Display product 3" },
