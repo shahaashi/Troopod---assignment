@@ -16,12 +16,12 @@
           "type": "slide",
           "settings": {
             "icon": "leaf",
-            "product_1": "",
+            "product_1": "copper-bronze-brass-cleaner",
             "product_2": "",
             "product_3": "",
             "offer_label": "Single bottle",
-            "discount_type": "none",
-            "discount_value": 0
+            "discount_type": "percentage",
+            "discount_value": 5
           }
         },
         "offer_2": {
