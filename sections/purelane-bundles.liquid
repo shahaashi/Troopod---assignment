@@ -22,7 +22,7 @@
         {%- liquid
           assign bundle_product = block.settings.bundle_product
           assign selected_variant = bundle_product.selected_or_first_available_variant
-          assign product_count = bundle_product.metafields.custom.bundle_quantity.value | default: block.settings.product_count
+          assign product_count = block.settings.product_count
           assign display_price = selected_variant.price
           assign display_compare_price = selected_variant.compare_at_price
           if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
@@ -104,7 +104,7 @@
     "settings": [
       { "type": "product", "id": "bundle_product", "label": "Bundle product", "info": "Price, compare-at price, availability and destination use this product." },
       { "type": "text", "id": "label", "label": "Tier label", "default": "Starter" },
-      { "type": "range", "id": "product_count", "min": 1, "max": 12, "step": 1, "label": "Product count", "info": "Fallback for custom.bundle_quantity metafield.", "default": 2 },
+      { "type": "range", "id": "product_count", "min": 1, "max": 12, "step": 1, "label": "Product count", "info": "Controls the number of products displayed in this tier.", "default": 2 },
       { "type": "text", "id": "quantity_label", "label": "Quantity label", "default": "Products" },
       { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "Use product price" }, { "value": "percentage", "label": "Percentage" }, { "value": "fixed", "label": "Fixed rupee amount" }], "default": "none" },
       { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
