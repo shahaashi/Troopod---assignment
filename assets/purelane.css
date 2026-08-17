@@ -595,6 +595,8 @@
 .pl-tier__qty small { color: var(--pl-paper-3); display: block; font: 600 1.4rem/1.2 var(--font-body-family); letter-spacing: .1em; margin-top: 6px; text-transform: uppercase; }
 .pl-tier__price { color: var(--pl-accent); font-family: var(--font-heading-family); font-size: 2.7rem; font-weight: 700; margin: 16px 0 4px; }
 .pl-tier__price s { color: var(--pl-paper-3); font: 500 1.4rem var(--font-body-family); margin-left: 8px; }
+.pl-tier__saving { color: #4f7d10; font-size: 1rem; font-weight: 800; letter-spacing: .08em; margin: 0 0 10px; text-transform: uppercase; }
+.pl-tier__warning { background: rgba(201,118,29,.10); border: 1px solid rgba(201,118,29,.30); border-radius: 10px; color: #8a5b16; font-size: 1.1rem; line-height: 1.4; margin: 0 0 12px; padding: 8px 10px; }
 .pl-tier__note { color: var(--pl-paper-2); font-size: 1.2rem; margin: 0; }
 .pl-tier__benefits { display: grid; gap: 8px; list-style: none; margin: 16px 0 20px; padding: 0; }
 .pl-tier__benefits li { color: var(--pl-paper-2); display: flex; font-size: 1.3rem; gap: 9px; }

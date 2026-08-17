@@ -34,3 +34,43 @@ if (!customElements.get('purelane-section')) {
     },
   );
 }
+
+if (!window.__purelaneBundleCartBound) {
+  window.__purelaneBundleCartBound = true;
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-bundle-add]');
+    if (!button || button.disabled) return;
+
+    const tier = button.closest('[data-bundle-tier]');
+    const variants = Array.from(tier?.querySelectorAll('[data-bundle-variant]') || []);
+
+    if (!tier || !variants.length || variants.some((item) => item.dataset.bundleAvailable !== 'true')) return;
+
+    const originalLabel = button.dataset.bundleLabel || button.textContent.trim();
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Adding...';
+
+    try {
+      const response = await fetch(window.routes?.cart_add_url || '/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          items: variants.map((item) => ({
+            id: Number(item.dataset.bundleVariant),
+            quantity: 1,
+            properties: { _bundle_tier: tier.dataset.bundleKey },
+          })),
+        }),
+      });
+
+      if (!response.ok) throw new Error('Unable to add this bundle.');
+      window.location.assign(window.routes?.cart_url || '/cart');
+    } catch (error) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      button.textContent = originalLabel;
+      window.alert(error.message || 'Unable to add this bundle. Please try again.');
+    }
+  });
+}

@@ -250,13 +250,10 @@
         "tier_1": {
           "type": "tier",
           "settings": {
-            "bundle_product": "",
+            "bundle_products": ["copper-bronze-brass-cleaner", "kitchen-cleaner-foaming"],
             "label": "Starter",
             "product_count": 2,
             "quantity_label": "Products",
-            "image_product_1": "copper-bronze-brass-cleaner",
-            "image_product_2": "kitchen-cleaner-foaming",
-            "image_product_3": "",
             "price_note": "Flat price per product",
             "benefit_1": "Pick any two products",
             "benefit_2": "Free shipping across India",
@@ -268,13 +265,10 @@
         "tier_2": {
           "type": "tier",
           "settings": {
-            "bundle_product": "",
+            "bundle_products": ["tap-cleaner-limescale-remover", "kitchen-cleaner-foaming", "copper-bronze-brass-cleaner"],
             "label": "Most popular",
             "product_count": 3,
             "quantity_label": "Products",
-            "image_product_1": "tap-cleaner-limescale-remover",
-            "image_product_2": "kitchen-cleaner-foaming",
-            "image_product_3": "copper-bronze-brass-cleaner",
             "price_note": "Flat price per product",
             "benefit_1": "Pick any three products",
             "benefit_2": "Covers kitchen and laundry",
@@ -286,13 +280,10 @@
         "tier_3": {
           "type": "tier",
           "settings": {
-            "bundle_product": "",
+            "bundle_products": [],
             "label": "Whole home",
             "product_count": 7,
             "quantity_label": "Products",
-            "image_product_1": "",
-            "image_product_2": "",
-            "image_product_3": "",
             "price_note": "Flat price per product",
             "benefit_1": "Pick any five products",
             "benefit_2": "Every room in one order",
