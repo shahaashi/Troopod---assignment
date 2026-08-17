@@ -106,6 +106,16 @@
             if offer_product.compare_at_price > offer_price
               assign compare_price = offer_product.compare_at_price
             endif
+            if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
+              assign discount_multiplier = 100 | minus: block.settings.discount_value
+              assign offer_price = compare_price | times: discount_multiplier | divided_by: 100
+            elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
+              assign discount_amount = block.settings.discount_value | times: 100
+              assign offer_price = compare_price | minus: discount_amount
+            endif
+            if offer_price < 0
+              assign offer_price = 0
+            endif
             assign saving_amount = compare_price | minus: offer_price
           -%}
           <div
@@ -362,6 +372,24 @@
           "id": "saving_text",
           "label": "Saving text",
           "default": "Save more"
+        },
+        {
+          "type": "select",
+          "id": "discount_type",
+          "label": "Discount type",
+          "options": [
+            { "value": "none", "label": "Use product price" },
+            { "value": "percentage", "label": "Percentage" },
+            { "value": "fixed", "label": "Fixed rupee amount" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "number",
+          "id": "discount_value",
+          "label": "Discount value",
+          "info": "Enter a percentage or rupee amount based on the selected discount type.",
+          "default": 0
         }
       ]
     },

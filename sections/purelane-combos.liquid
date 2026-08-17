@@ -24,10 +24,22 @@
             endif
           endfor
           assign compare_price = selected_variant.compare_at_price
+          assign display_price = selected_variant.price
+          assign display_compare_price = compare_price
+          if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
+            assign discount_multiplier = 100 | minus: block.settings.discount_value
+            assign display_price = display_compare_price | times: discount_multiplier | divided_by: 100
+          elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
+            assign discount_amount = block.settings.discount_value | times: 100
+            assign display_price = display_compare_price | minus: discount_amount
+          endif
+          if display_price < 0
+            assign display_price = 0
+          endif
           assign combo_form_id = 'PurelaneComboForm-' | append: section.id | append: '-' | append: block.id
           assign saving = 0
-          if compare_price > selected_variant.price
-            assign saving = compare_price | minus: selected_variant.price
+          if display_compare_price > display_price
+            assign saving = display_compare_price | minus: display_price
           endif
         -%}
         <article class="pl-glass pl-combo{% if block.settings.featured %} pl-combo--featured{% endif %}" role="listitem" {{ block.shopify_attributes }}>
@@ -59,10 +71,10 @@
             <h3 class="pl-combo__title">{{ block.settings.title | default: bundle_product.title | default: 'Choose a bundle' | escape }}</h3>
             <span class="pl-combo__count">{{ item_count }} products</span>
             {%- if block.settings.description != blank -%}<div class="pl-combo__description">{{ block.settings.description }}</div>{%- endif -%}
-            {%- if bundle_product != blank -%}
+            {%- if display_price > 0 -%}
               <div class="pl-combo__price">
-                <strong>{{ selected_variant.price | money }}</strong>
-                {%- if compare_price > selected_variant.price -%}<s>{{ compare_price | money }}</s><em class="pl-combo__saving">Save {{ saving | money }}</em>{%- endif -%}
+                <strong>{{ display_price | money }}</strong>
+                {%- if display_compare_price > display_price -%}<s>{{ display_compare_price | money }}</s><em class="pl-combo__saving">Save {{ saving | money }}</em>{%- endif -%}
               </div>
             {%- endif -%}
             {%- if block.settings.fine_print != blank -%}<div class="pl-combo__fine">{{ block.settings.fine_print | escape }}</div>{%- endif -%}
@@ -111,6 +123,8 @@
     "settings": [
       { "type": "product", "id": "bundle_product", "label": "Bundle product", "info": "Title, price, availability and add-to-cart use this Shopify product." },
       { "type": "text", "id": "title", "label": "Display title", "info": "Leave blank to use the bundle product title." },
+      { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "Use product price" }, { "value": "percentage", "label": "Percentage" }, { "value": "fixed", "label": "Fixed rupee amount" }], "default": "none" },
+      { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
       { "type": "product", "id": "product_1", "label": "Included product 1" },
       { "type": "text", "id": "benefit_1", "label": "Product 1 benefit" },
       { "type": "product", "id": "product_2", "label": "Included product 2" },
