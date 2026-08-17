@@ -4,6 +4,10 @@
 <purelane-section class="pl-section" id="bundles" data-scene="4" aria-labelledby="PurelaneBundlesHeading-{{ section.id }}">
   <div class="pl-wrap">
     {%- assign heading_id = 'PurelaneBundlesHeading-' | append: section.id -%}
+    {%- assign display_collection = section.settings.display_collection -%}
+    {%- if display_collection == blank -%}
+      {%- assign display_collection = collections.all -%}
+    {%- endif -%}
     <div class="pl-glass pl-bundle-intro" data-pl-reveal>
       {% render 'purelane-section-heading',
         eyebrow: section.settings.eyebrow,
@@ -36,9 +40,16 @@
           {%- if block.settings.label != blank -%}<span class="pl-tier__tag">{{ block.settings.label | escape }}</span>{%- endif -%}
           <div class="pl-tier__media">
             {%- assign media_count = 0 -%}
-            {%- for item_index in (1..5) -%}
+            {%- for item_index in (1..12) -%}
               {%- assign image_key = 'image_product_' | append: item_index -%}
               {%- assign image_product = block.settings[image_key] -%}
+              {%- if image_product == blank and item_index <= product_count -%}
+                {%- assign fallback_index = item_index | minus: 1 -%}
+                {%- assign image_product = display_collection.products[fallback_index] -%}
+              {%- endif -%}
+              {%- if item_index > product_count -%}
+                {%- assign image_product = blank -%}
+              {%- endif -%}
               {%- if image_product != blank -%}
                 {%- assign media_count = media_count | plus: 1 -%}
                 {% render 'purelane-product-media', product: image_product, loading: 'lazy', sizes: '100px', widths: '100, 160, 220', media_class: 'pl-tier__image' %}
@@ -84,7 +95,8 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Build your bundle" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "One box. Every room." },
-    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Mix and match across kitchen, laundry, home and skin. One flat price, no code needed, free shipping either way.</p>" }
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Mix and match across kitchen, laundry, home and skin. One flat price, no code needed, free shipping either way.</p>" },
+    { "type": "collection", "id": "display_collection", "label": "Display product collection", "info": "Used when a tier has fewer explicitly selected display products than its product count.", "default": "all" }
   ],
   "blocks": [{
     "type": "tier",
@@ -99,8 +111,6 @@
       { "type": "product", "id": "image_product_1", "label": "Display product 1" },
       { "type": "product", "id": "image_product_2", "label": "Display product 2" },
       { "type": "product", "id": "image_product_3", "label": "Display product 3" },
-      { "type": "product", "id": "image_product_4", "label": "Display product 4" },
-      { "type": "product", "id": "image_product_5", "label": "Display product 5" },
       { "type": "text", "id": "price_note", "label": "Price note", "default": "Flat price per product" },
       { "type": "text", "id": "benefit_1", "label": "Benefit 1", "default": "Pick any products" },
       { "type": "text", "id": "benefit_2", "label": "Benefit 2", "default": "Free shipping across India" },
