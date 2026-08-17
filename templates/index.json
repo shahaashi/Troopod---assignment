@@ -301,10 +301,11 @@
             "bundle_products": [
               "copper-bronze-brass-cleaner",
               "kitchen-cleaner-foaming",
-              "tap-cleaner-limescale-remover"
+              "tap-cleaner-limescale-remover",
+              "washing-machine-cleaner-descaler"
             ],
             "label": "Whole home",
-            "product_count": 3,
+            "product_count": 4,
             "quantity_label": "Products",
             "discount_type": "fixed",
             "discount_value": 147,
