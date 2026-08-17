@@ -985,7 +985,7 @@
 
 /* Exact reference water cinematics ----------------------------------------- */
 .pl-scenes {
-  background: #eee7fb;
+  background: #d9f2df;
   display: block;
   inset: 0;
   overflow: hidden;
@@ -993,12 +993,12 @@
   position: fixed;
   z-index: 0;
 }
-.pl-scenes .scene { inset: 0; opacity: 0; position: absolute; transition: opacity 1.5s ease; }
+.pl-scenes .scene { inset: 0; opacity: 0; position: absolute; transition: opacity 1.2s ease; }
 .pl-scenes .scene.on { opacity: 1; }
 .pl-scenes .s1 { background: linear-gradient(178deg, #fbfffb 0%, #eafaec 24%, #d6f1dc 54%, #bfe8ca 100%); }
-.pl-scenes .s2 { background: linear-gradient(178deg, #f6fdf7 0%, #e3f7e7 26%, #cbedd4 58%, #b2e2c2 100%); }
-.pl-scenes .s3 { background: linear-gradient(178deg, #f0fbf2 0%, #d9f2df 28%, #bde6c8 60%, #a2d9b6 100%); }
-.pl-scenes .s4 { background: linear-gradient(178deg, #e9f8ec 0%, #cdedd6 30%, #addcbe 62%, #8ecdaa 100%); }
+.pl-scenes .s2 { background: linear-gradient(178deg, #f1fcf3 0%, #d7f1dc 26%, #b9e4c5 58%, #98d2ad 100%); }
+.pl-scenes .s3 { background: linear-gradient(178deg, #e8faec 0%, #c8ecd2 28%, #9ed8b0 60%, #78bd94 100%); }
+.pl-scenes .s4 { background: linear-gradient(178deg, #def6e4 0%, #b5e1c2 30%, #83c69d 62%, #5aa57d 100%); }
 .pl-scenes .water { inset: -14% -10%; pointer-events: none; position: absolute; transition: opacity 1.2s ease; }
 .pl-scenes .wl { inset: 0; position: absolute; translate: var(--px, 0) var(--py, 0); will-change: transform; }
 .pl-scenes .wl .sv { height: 100%; width: 100%; }

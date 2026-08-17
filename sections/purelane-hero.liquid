@@ -69,6 +69,8 @@
             assign second_product = block.settings.product_2 | default: fallback_collection.products[1]
             assign third_product = block.settings.product_3 | default: fallback_collection.products[2]
             assign offer_product = block.settings.offer_product | default: first_product
+            assign offer_price = offer_product.price
+            assign regular_price = 0
             assign loading_strategy = 'lazy'
             if slide_index == 1
               assign loading_strategy = 'eager'
@@ -83,6 +85,28 @@
             if third_product != blank and slide_index > 2
               assign product_count = product_count | plus: 1
             endif
+
+            comment
+              The compare price for a multi-product offer is the sum of the
+              displayed products. A bundle product may still provide an
+              explicit compare-at price, but a single product's compare-at
+              price must never be presented as the value of an Any 2/Any 3
+              offer.
+            endcomment
+            if first_product != blank
+              assign regular_price = regular_price | plus: first_product.price
+            endif
+            if second_product != blank and slide_index > 1
+              assign regular_price = regular_price | plus: second_product.price
+            endif
+            if third_product != blank and slide_index > 2
+              assign regular_price = regular_price | plus: third_product.price
+            endif
+            assign compare_price = regular_price
+            if offer_product.compare_at_price > offer_price
+              assign compare_price = offer_product.compare_at_price
+            endif
+            assign saving_amount = compare_price | minus: offer_price
           -%}
           <div
             class="purelane-hero__slide"
@@ -137,13 +161,19 @@
                 {{ block.settings.offer_label | default: offer_product.title | default: 'Choose products' | escape }}
               </span>
               <span class="purelane-hero__offer-price">
-                {{ offer_product.price | money }}
-                {%- if offer_product.compare_at_price > offer_product.price -%}
-                  <span class="purelane-hero__offer-compare">{{ offer_product.compare_at_price | money }}</span>
+                {{ offer_price | money }}
+                {%- if compare_price > offer_price -%}
+                  <span class="purelane-hero__offer-compare">{{ compare_price | money }}</span>
                 {%- endif -%}
               </span>
               {%- if block.settings.saving_text != blank -%}
-                <span class="purelane-hero__offer-saving">{{ block.settings.saving_text | escape }}</span>
+                <span class="purelane-hero__offer-saving">
+                  {%- if block.settings.saving_text == 'Save more' or block.settings.saving_text == 'Best value' -%}
+                    Save {{ saving_amount | money }}
+                  {%- else -%}
+                    {{ block.settings.saving_text | escape }}
+                  {%- endif -%}
+                </span>
               {%- endif -%}
             </div>{%- endif -%}
           </div>

@@ -330,7 +330,12 @@
       {%- render 'cart-drawer' -%}
     {%- endif -%}
 
-    {%- if template.name == 'index' and settings.purelane_background_enable -%}
+    {%- comment -%}
+      Keep the Purelane background on by default, including on stores where
+      the setting has not yet been persisted into settings_data.json. It can
+      still be explicitly disabled from Theme settings.
+    {%- endcomment -%}
+    {%- if template.name == 'index' and settings.purelane_background_enable != false -%}
       {%- render 'purelane-background' -%}
     {%- endif -%}
 
