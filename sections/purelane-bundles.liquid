@@ -32,14 +32,14 @@
             assign display_price = 0
           endif
         -%}
-        <article class="pl-glass pl-tier{% if block.settings.featured %} pl-tier--featured{% endif %}" data-pl-reveal style="--pl-delay: {{ forloop.index0 | times: 90 }}ms;" {{ block.shopify_attributes }}>
+        <article class="pl-glass pl-tier{% if block.settings.featured %} pl-tier--featured{% endif %}" data-pl-reveal style="--pl-delay: {{ forloop.index0 | times: 90 }}ms; --pl-product-count: {{ product_count }};" {{ block.shopify_attributes }}>
           {%- if block.settings.label != blank -%}<span class="pl-tier__tag">{{ block.settings.label | escape }}</span>{%- endif -%}
           <div class="pl-tier__media">
             {%- assign media_count = 0 -%}
             {%- for item_index in (1..5) -%}
               {%- assign image_key = 'image_product_' | append: item_index -%}
               {%- assign image_product = block.settings[image_key] -%}
-              {%- if image_product != blank -%}
+              {%- if item_index <= product_count -%}
                 {%- assign media_count = media_count | plus: 1 -%}
                 {% render 'purelane-product-media', product: image_product, loading: 'lazy', sizes: '100px', widths: '100, 160, 220', media_class: 'pl-tier__image' %}
               {%- endif -%}
