@@ -57,4 +57,4 @@ I would run screenshot diffs against the authenticated development-store preview
 
 ## AI workflow notes
 
-The reference HTML was treated as the visual specification and decomposed into repeated primitives before implementation. Mechanical extraction and edge-case review were delegated; Shopify data modeling, Liquid boundaries, accessibility, lifecycle behavior, and performance decisions were reviewed manually. The main failure mode to guard against is copying prototype values or animation code directly into production instead of first deciding which values belong to Shopify data, theme settings, or reusable snippets.
+See [AI_WORKFLOW.md](AI_WORKFLOW.md) for what was delegated, where it failed, and what would be systematised at scale. The main failure mode to guard against is copying prototype values or animation code directly into production instead of first deciding which values belong to Shopify data, theme settings, or reusable snippets.
