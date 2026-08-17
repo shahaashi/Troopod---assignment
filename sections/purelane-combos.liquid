@@ -72,7 +72,6 @@
                 <span class="pl-combo__item">
                   {% render 'purelane-product-media', product: product, loading: 'lazy', sizes: '68px', widths: '100, 160, 220', media_class: 'pl-combo__image' %}
                   <span>{{ product.title | escape }}</span>
-                  {%- if item_variant != blank -%}<span class="pl-combo__item-price">&#8377;{{ item_variant.price | money_without_currency }}</span>{%- endif -%}
                 </span>
               {%- endfor -%}
             </div>
@@ -87,7 +86,6 @@
                 {%- if savings > 0 -%}<s>&#8377;{{ subtotal | money_without_currency }}</s>{%- endif -%}
               </div>
               {%- if savings > 0 -%}<span class="pl-combo__saving">Save &#8377;{{ savings | money_without_currency }}</span>{%- endif -%}
-              <p class="pl-combo__flat">Flat &#8377;{{ flat_price | money_without_currency }} per product</p>
             {%- endif -%}
             {%- if product_count == 0 -%}<p class="pl-combo__warning" role="alert">Select at least one bundle product.</p>{%- endif -%}
             {%- if unavailable_product_name != blank -%}<p class="pl-combo__warning" role="alert">{{ unavailable_product_name | escape }} is unavailable.</p>{%- endif -%}
