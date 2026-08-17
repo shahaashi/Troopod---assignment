@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "purelane_hero": {
@@ -250,10 +259,16 @@
         "tier_1": {
           "type": "tier",
           "settings": {
-            "bundle_products": ["copper-bronze-brass-cleaner", "kitchen-cleaner-foaming"],
+            "bundle_products": [
+              "copper-bronze-brass-cleaner",
+              "kitchen-cleaner-foaming"
+            ],
             "label": "Starter",
             "product_count": 2,
             "quantity_label": "Products",
+            "discount_type": "percentage",
+            "discount_value": 5,
+            "discount_checkout_ready": false,
             "price_note": "Flat price per product",
             "benefit_1": "Pick any two products",
             "benefit_2": "Free shipping across India",
@@ -265,10 +280,13 @@
         "tier_2": {
           "type": "tier",
           "settings": {
-            "bundle_products": ["tap-cleaner-limescale-remover", "kitchen-cleaner-foaming", "copper-bronze-brass-cleaner"],
+            "bundle_products": [],
             "label": "Most popular",
             "product_count": 3,
             "quantity_label": "Products",
+            "discount_type": "percentage",
+            "discount_value": 0,
+            "discount_checkout_ready": false,
             "price_note": "Flat price per product",
             "benefit_1": "Pick any three products",
             "benefit_2": "Covers kitchen and laundry",
@@ -280,10 +298,17 @@
         "tier_3": {
           "type": "tier",
           "settings": {
-            "bundle_products": [],
+            "bundle_products": [
+              "copper-bronze-brass-cleaner",
+              "kitchen-cleaner-foaming",
+              "tap-cleaner-limescale-remover"
+            ],
             "label": "Whole home",
-            "product_count": 7,
+            "product_count": 3,
             "quantity_label": "Products",
+            "discount_type": "fixed",
+            "discount_value": 147,
+            "discount_checkout_ready": false,
             "price_note": "Flat price per product",
             "benefit_1": "Pick any five products",
             "benefit_2": "Every room in one order",
