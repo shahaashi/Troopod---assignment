@@ -14,81 +14,92 @@
     <div class="pl-rail" role="list" aria-label="{{ section.settings.rail_label | escape }}" data-pl-reveal>
       {%- for block in section.blocks -%}
         {%- liquid
-          assign bundle_product = block.settings.bundle_product
-          assign selected_variant = bundle_product.selected_or_first_available_variant
-          assign item_count = 0
-          for item_index in (1..3)
-            assign item_key = 'product_' | append: item_index
-            if block.settings[item_key] != blank
-              assign item_count = item_count | plus: 1
+          assign products = block.settings.products
+          assign product_count = block.settings.products.count
+          assign first_product = products.first
+          assign subtotal = 0
+          assign unavailable_product_name = blank
+
+          for product in products
+            assign selected_variant = product.selected_or_first_available_variant
+            if selected_variant == blank or selected_variant.available == false
+              if unavailable_product_name == blank
+                assign unavailable_product_name = product.title
+              endif
+            endif
+            if selected_variant != blank
+              assign subtotal = subtotal | plus: selected_variant.price
             endif
           endfor
-          assign compare_price = selected_variant.compare_at_price
-          assign display_price = selected_variant.price
-          assign display_compare_price = compare_price
-          assign product_sum = 0
-          for price_index in (1..3)
-            assign price_key = 'product_' | append: price_index
-            assign price_product = block.settings[price_key]
-            if price_product != blank
-              assign product_sum = product_sum | plus: price_product.price
-            endif
-          endfor
-          if product_sum > 0
-            assign display_compare_price = product_sum
+
+          assign final_price = subtotal
+          if block.settings.discount_type == 'percentage'
+            assign multiplier = 100 | minus: block.settings.discount_value
+            assign final_price = subtotal | times: multiplier | divided_by: 100
+          elsif block.settings.discount_type == 'fixed'
+            assign fixed_discount = block.settings.discount_value | times: 100
+            assign final_price = subtotal | minus: fixed_discount
           endif
-          assign combo_form_id = 'PurelaneComboForm-' | append: section.id | append: '-' | append: block.id
-          assign saving = 0
-          if display_compare_price > display_price
-            assign saving = display_compare_price | minus: display_price
+          if final_price < 0
+            assign final_price = 0
           endif
+
+          assign savings = subtotal | minus: final_price
+          assign flat_price = 0
+          if product_count > 0
+            assign flat_price = final_price | divided_by: product_count
+          endif
+
+          assign can_add_combo = true
+          if product_count == 0 or unavailable_product_name != blank
+            assign can_add_combo = false
+          endif
+          assign combo_id = section.id | append: '-' | append: block.id
+          assign combo_title = block.settings.title | default: first_product.title | default: 'Bundle'
         -%}
-        <article class="pl-glass pl-combo{% if block.settings.featured %} pl-combo--featured{% endif %}" role="listitem" {{ block.shopify_attributes }}>
+        <article class="pl-glass pl-combo{% if block.settings.featured %} pl-combo--featured{% endif %}" role="listitem" data-combo-bundle data-bundle-id="{{ combo_id | escape }}" data-bundle-title="{{ combo_title | escape }}" {{ block.shopify_attributes }}>
           <div class="pl-combo__tray">
             {%- if block.settings.saving_label != blank -%}
               <span class="pl-combo__save">{{ block.settings.saving_label | escape }}</span>
-            {%- elsif saving > 0 -%}
-              <span class="pl-combo__save">You save {{ saving | money }}</span>
+            {%- elsif savings > 0 -%}
+              <span class="pl-combo__save">Save &#8377;{{ savings | money_without_currency }}</span>
             {%- endif -%}
             {%- if block.settings.flag != blank -%}<span class="pl-combo__flag">{{ block.settings.flag | escape }}</span>{%- endif -%}
             <div class="pl-combo__stack">
-              {%- for item_index in (1..3) -%}
-                {%- liquid
-                  assign product_key = 'product_' | append: item_index
-                  assign benefit_key = 'benefit_' | append: item_index
-                  assign item_product = block.settings[product_key]
-                -%}
-                {%- if item_product != blank -%}
-                  {%- unless forloop.first -%}<span class="pl-combo__plus" aria-hidden="true">+</span>{%- endunless -%}
-                  <span class="pl-combo__item">
-                    {% render 'purelane-product-media', product: item_product, loading: 'lazy', sizes: '68px', widths: '100, 160, 220', media_class: 'pl-combo__image' %}
-                    <span>{{ block.settings[benefit_key] | default: item_product.title | escape }}</span>
-                  </span>
-                {%- endif -%}
+              {%- for product in products -%}
+                {%- assign item_variant = product.selected_or_first_available_variant -%}
+                {%- unless forloop.first -%}<span class="pl-combo__plus" aria-hidden="true">+</span>{%- endunless -%}
+                <span class="pl-combo__item">
+                  {% render 'purelane-product-media', product: product, loading: 'lazy', sizes: '68px', widths: '100, 160, 220', media_class: 'pl-combo__image' %}
+                  <span>{{ product.title | escape }}</span>
+                  {%- if item_variant != blank -%}<span class="pl-combo__item-price">&#8377;{{ item_variant.price | money_without_currency }}</span>{%- endif -%}
+                </span>
               {%- endfor -%}
             </div>
           </div>
           <div class="pl-combo__body">
-            <h3 class="pl-combo__title">{{ block.settings.title | default: bundle_product.title | default: 'Choose a bundle' | escape }}</h3>
-            <span class="pl-combo__count">{{ item_count }} products</span>
+            <h3 class="pl-combo__title">{{ combo_title | escape }}</h3>
+            <span class="pl-combo__count">{{ product_count }} products</span>
             {%- if block.settings.description != blank -%}<div class="pl-combo__description">{{ block.settings.description }}</div>{%- endif -%}
-            {%- if display_price > 0 -%}
+            {%- if product_count > 0 and subtotal > 0 -%}
               <div class="pl-combo__price">
-                <strong>{{ display_price | money }}</strong>
+                <strong>&#8377;{{ final_price | money_without_currency }}</strong>
+                {%- if savings > 0 -%}<s>&#8377;{{ subtotal | money_without_currency }}</s>{%- endif -%}
               </div>
+              {%- if savings > 0 -%}<span class="pl-combo__saving">Save &#8377;{{ savings | money_without_currency }}</span>{%- endif -%}
+              <p class="pl-combo__flat">Flat &#8377;{{ flat_price | money_without_currency }} per product</p>
             {%- endif -%}
+            {%- if product_count == 0 -%}<p class="pl-combo__warning" role="alert">Select at least one bundle product.</p>{%- endif -%}
+            {%- if unavailable_product_name != blank -%}<p class="pl-combo__warning" role="alert">{{ unavailable_product_name | escape }} is unavailable.</p>{%- endif -%}
             {%- if block.settings.fine_print != blank -%}<div class="pl-combo__fine">{{ block.settings.fine_print | escape }}</div>{%- endif -%}
-            {%- if bundle_product != blank -%}
-              {%- form 'product', bundle_product, id: combo_form_id -%}
-                <input type="hidden" name="id" value="{{ selected_variant.id }}">
-                <button class="pl-button {% if block.settings.featured %}pl-button--primary{% else %}pl-button--ghost{% endif %}" type="submit" name="add"{% unless selected_variant.available %} disabled{% endunless %}>
-                  {%- if selected_variant.available -%}{{ block.settings.button_label | escape }}{%- else -%}Sold out{%- endif -%}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6"/></svg>
-                </button>
-              {%- endform -%}
-            {%- else -%}
-              <span class="pl-button pl-button--ghost" aria-disabled="true">Select bundle product</span>
-            {%- endif -%}
+            {%- for product in products -%}
+              {%- assign selected_variant = product.selected_or_first_available_variant -%}
+              <span data-bundle-variant="{{ selected_variant.id }}" data-bundle-available="{{ selected_variant.available }}" hidden></span>
+            {%- endfor -%}
+            <button class="pl-button {% if block.settings.featured %}pl-button--primary{% else %}pl-button--ghost{% endif %}" type="button" data-combo-add data-bundle-label="{{ block.settings.button_label | escape }}"{% unless can_add_combo %} disabled{% endunless %}>
+              {%- if product_count == 0 -%}Select bundle products{%- elsif unavailable_product_name != blank -%}{{ unavailable_product_name | escape }} unavailable{%- else -%}{{ block.settings.button_label | escape }}{%- endif -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6"/></svg>
+            </button>
           </div>
         </article>
       {%- else -%}
@@ -121,16 +132,16 @@
     "type": "combo",
     "name": "Combo",
     "settings": [
-      { "type": "product", "id": "bundle_product", "label": "Bundle product", "info": "Title, price, availability and add-to-cart use this Shopify product." },
-      { "type": "text", "id": "title", "label": "Display title", "info": "Leave blank to use the bundle product title." },
-      { "type": "product", "id": "product_1", "label": "Included product 1" },
-      { "type": "text", "id": "benefit_1", "label": "Product 1 benefit" },
-      { "type": "product", "id": "product_2", "label": "Included product 2" },
-      { "type": "text", "id": "benefit_2", "label": "Product 2 benefit" },
-      { "type": "product", "id": "product_3", "label": "Included product 3" },
-      { "type": "text", "id": "benefit_3", "label": "Product 3 benefit" },
+      {
+        "type": "product_list",
+        "id": "products",
+        "label": "Bundle products"
+      },
+      { "type": "text", "id": "title", "label": "Display title", "info": "Leave blank to use the first selected product title." },
       { "type": "richtext", "id": "description", "label": "Description" },
-      { "type": "text", "id": "saving_label", "label": "Saving label", "info": "Leave blank to calculate from the product compare-at price." },
+      { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "None" }, { "value": "percentage", "label": "Percentage" }, { "value": "fixed", "label": "Fixed rupee amount" }], "default": "none" },
+      { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
+      { "type": "text", "id": "saving_label", "label": "Saving badge", "info": "Optional badge shown above the products. Calculated savings are always shown with the price." },
       { "type": "text", "id": "flag", "label": "Corner flag" },
       { "type": "text", "id": "fine_print", "label": "Fine print", "default": "Inclusive of all taxes · COD available" },
       { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop bundle" },

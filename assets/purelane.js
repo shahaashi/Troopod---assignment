@@ -38,13 +38,17 @@ if (!customElements.get('purelane-section')) {
 if (!window.__purelaneBundleCartBound) {
   window.__purelaneBundleCartBound = true;
   document.addEventListener('click', async (event) => {
-    const button = event.target.closest('[data-bundle-add]');
+    const button = event.target.closest('[data-bundle-add], [data-combo-add]');
     if (!button || button.disabled) return;
 
-    const tier = button.closest('[data-bundle-tier]');
+    const tier = button.closest('[data-bundle-tier], [data-combo-bundle]');
     const variants = Array.from(tier?.querySelectorAll('[data-bundle-variant]') || []);
 
     if (!tier || !variants.length || variants.some((item) => item.dataset.bundleAvailable !== 'true')) return;
+
+    const properties = tier.matches('[data-combo-bundle]')
+      ? { _bundle_id: tier.dataset.bundleId, _bundle_title: tier.dataset.bundleTitle }
+      : { _bundle_tier: tier.dataset.bundleKey };
 
     const originalLabel = button.dataset.bundleLabel || button.textContent.trim();
     button.disabled = true;
@@ -59,7 +63,7 @@ if (!window.__purelaneBundleCartBound) {
           items: variants.map((item) => ({
             id: Number(item.dataset.bundleVariant),
             quantity: 1,
-            properties: { _bundle_tier: tier.dataset.bundleKey },
+            properties: { ...properties },
           })),
         }),
       });

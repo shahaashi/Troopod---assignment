@@ -566,7 +566,8 @@
 .pl-combo__flag { background: linear-gradient(135deg, var(--pl-accent-2), #5d8d1c); color: #08211a; font-size: .86rem; position: absolute; right: 14px; top: 14px; }
 .pl-combo__stack { align-items: flex-end; display: flex; gap: 3px; }
 .pl-combo__item { color: var(--pl-paper-2); flex: 1 1 0; font-size: .86rem; font-weight: 600; line-height: 1.32; min-width: 0; text-align: center; }
-.pl-combo__image { display: flex; height: 66px; margin: 0 auto 8px; max-width: 68px; object-fit: contain; width: auto; }
+.pl-combo__item-price { display: block; font-size: .82rem; margin-top: 3px; }
+.pl-combo__image { display: flex; height: 66px; margin: 0 auto 8px; max-width: 100%; object-fit: contain; width: auto; }
 .pl-combo__plus { color: var(--pl-accent); flex: 0 0 9px; font-size: 1.2rem; font-weight: 800; padding-bottom: 30px; text-align: center; }
 .pl-combo__body { display: flex; flex: 1; flex-direction: column; padding: 15px 16px 18px; }
 .pl-combo__title { color: var(--pl-surface); font-family: var(--font-heading-family); font-size: 1.6rem; font-weight: 700; letter-spacing: -.005em; line-height: 1.1; margin: 0; text-transform: uppercase; }
@@ -575,7 +576,9 @@
 .pl-combo__price { align-items: baseline; display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 6px; }
 .pl-combo__price strong { color: var(--pl-surface); font-family: var(--font-heading-family); font-size: 2.5rem; font-weight: 800; }
 .pl-combo__price s { color: var(--pl-paper-3); font-size: 1.3rem; }
-.pl-combo__saving { background: rgba(240,160,60,.18); border: 1px solid rgba(240,160,60,.36); border-radius: 999px; color: var(--pl-accent); font-size: .95rem; font-style: normal; font-weight: 800; letter-spacing: .1em; padding: 4px 9px; text-transform: uppercase; }
+.pl-combo__saving { align-self: flex-start; background: rgba(240,160,60,.18); border: 1px solid rgba(240,160,60,.36); border-radius: 999px; color: var(--pl-accent); display: inline-block; font-size: .95rem; font-style: normal; font-weight: 800; letter-spacing: .1em; padding: 4px 9px; text-transform: uppercase; }
+.pl-combo__flat { color: var(--pl-paper-2); font-size: 1.1rem; margin: 7px 0 0; }
+.pl-combo__warning { background: rgba(201,118,29,.10); border: 1px solid rgba(201,118,29,.30); border-radius: 10px; color: #8a5b16; font-size: 1.05rem; line-height: 1.4; margin: 0 0 12px; padding: 8px 10px; }
 .pl-combo__fine { color: var(--pl-paper-3); font-size: 1.04rem; margin-bottom: 14px; }
 .pl-rail-cue, .pl-rail-note { color: var(--pl-paper-3); text-align: center; }
 .pl-rail-cue { align-items: center; display: flex; font-size: 1rem; font-weight: 700; gap: 8px; justify-content: center; letter-spacing: .16em; text-transform: uppercase; }
