@@ -182,11 +182,14 @@
         "combo_2": {
           "type": "combo",
           "settings": {
-            "products": [],
+            "products": [
+              "tap-cleaner-limescale-remover",
+              "kitchen-cleaner-foaming"
+            ],
             "title": "Laundry care bundle",
             "description": "<p>A softer, fresher wash and a cleaner machine, all in one box.</p>",
-            "discount_type": "none",
-            "discount_value": 0,
+            "discount_type": "fixed",
+            "discount_value": 100,
             "saving_label": "",
             "flag": "",
             "fine_print": "Inclusive of all taxes · COD available",
@@ -197,11 +200,16 @@
         "combo_3": {
           "type": "combo",
           "settings": {
-            "products": [],
+            "products": [
+              "copper-bronze-brass-cleaner",
+              "kitchen-cleaner-foaming",
+              "tap-cleaner-limescale-remover",
+              "washing-machine-cleaner-descaler"
+            ],
             "title": "Complete home bundle",
             "description": "<p>Cover every room with our biggest saving box.</p>",
-            "discount_type": "none",
-            "discount_value": 0,
+            "discount_type": "percentage",
+            "discount_value": 10,
             "saving_label": "",
             "flag": "Best value",
             "fine_print": "Inclusive of all taxes · COD available",
