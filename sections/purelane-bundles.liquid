@@ -11,33 +11,30 @@
       {%- for block in section.blocks -%}
         {%- liquid
           assign products = block.settings.bundle_products
-          assign product_count = block.settings.product_count
           assign selected_count = products.size
-          assign missing_count = product_count | minus: selected_count
+          assign product_count = selected_count
           assign subtotal = 0
           assign included_count = 0
           assign all_available = true
           for product in products limit: 12
-            if forloop.index <= product_count
-              assign variant = product.selected_or_first_available_variant
-              assign included_count = included_count | plus: 1
-              assign subtotal = subtotal | plus: variant.price
-              unless variant.available
-                assign all_available = false
-              endunless
-            endif
+            assign variant = product.selected_or_first_available_variant
+            assign included_count = included_count | plus: 1
+            assign subtotal = subtotal | plus: variant.price
+            unless variant.available
+              assign all_available = false
+            endunless
           endfor
-          assign has_enough_products = false
-          if selected_count >= product_count
-            assign has_enough_products = true
+          assign has_products = false
+          if selected_count > 0
+            assign has_products = true
           endif
           assign final_price = 0
           assign savings = 0
           assign unit_price = 0
-          if has_enough_products
+          if has_products
             assign final_price = subtotal
             if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
-              assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100
+              assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100.0 | round
               assign final_price = subtotal | minus: discount_amount
             elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
               assign discount_amount = block.settings.discount_value | times: 100
@@ -58,7 +55,7 @@
             assign checkout_ready = false
           endif
           assign can_add_bundle = false
-          if has_enough_products and all_available and checkout_ready
+          if has_products and all_available and checkout_ready
             assign can_add_bundle = true
           endif
         -%}
@@ -66,18 +63,16 @@
           {%- if block.settings.label != blank -%}<span class="pl-tier__tag">{{ block.settings.label | escape }}</span>{%- endif -%}
           <div class="pl-tier__media">
             {%- for product in products limit: 12 -%}
-              {%- if forloop.index <= product_count -%}
-                {% render 'purelane-product-media', product: product, loading: 'lazy', sizes: '100px', widths: '100, 160, 220', media_class: 'pl-tier__image' %}
-              {%- endif -%}
+              {% render 'purelane-product-media', product: product, loading: 'lazy', sizes: '100px', widths: '100, 160, 220', media_class: 'pl-tier__image' %}
             {%- endfor -%}
           </div>
           <div class="pl-tier__qty">{{ product_count }}<small>{{ block.settings.quantity_label | escape }}</small></div>
-          {%- if has_enough_products and subtotal > 0 -%}
-            <div class="pl-tier__price">{{ final_price | money }}{% if savings > 0 %}<s>{{ subtotal | money }}</s>{% endif %}</div>
-            {%- if savings > 0 -%}<p class="pl-tier__saving">Save {{ savings | money }}</p>{%- endif -%}
-            <p class="pl-tier__note">Flat {{ unit_price | money }} per product</p>
+          {%- if has_products and subtotal > 0 -%}
+            <div class="pl-tier__price">&#8377;{{ final_price | money_without_currency }}{% if savings > 0 %}<s>&#8377;{{ subtotal | money_without_currency }}</s>{% endif %}</div>
+            {%- if savings > 0 -%}<p class="pl-tier__saving">Save &#8377;{{ savings | money_without_currency }}</p>{%- endif -%}
+            <p class="pl-tier__note">Flat &#8377;{{ unit_price | money_without_currency }} per product</p>
           {%- endif -%}
-          {%- unless has_enough_products -%}<p class="pl-tier__warning" role="alert">Select {{ missing_count }} more product{% if missing_count != 1 %}s{% endif %} for this bundle.</p>{%- endunless -%}
+          {%- unless has_products -%}<p class="pl-tier__warning" role="alert">Select at least one product for this bundle.</p>{%- endunless -%}
           {%- unless all_available -%}<p class="pl-tier__warning" role="alert">One or more selected products is unavailable.</p>{%- endunless -%}
           {%- if checkout_ready == false -%}<p class="pl-tier__warning" role="alert">Activate the matching Shopify automatic discount or Function before enabling this bundle.</p>{%- endif -%}
           <ul class="pl-tier__benefits">
@@ -87,13 +82,11 @@
             {%- endfor -%}
           </ul>
           {%- for product in products limit: 12 -%}
-            {%- if forloop.index <= product_count -%}
-              {%- assign variant = product.selected_or_first_available_variant -%}
-              <span data-bundle-variant="{{ variant.id }}" data-bundle-available="{{ variant.available }}" hidden></span>
-            {%- endif -%}
+            {%- assign variant = product.selected_or_first_available_variant -%}
+            <span data-bundle-variant="{{ variant.id }}" data-bundle-available="{{ variant.available }}" hidden></span>
           {%- endfor -%}
           <button class="pl-button {% if block.settings.featured %}pl-button--primary{% else %}pl-button--ghost{% endif %}" type="button" data-bundle-add data-bundle-label="{{ block.settings.button_label | escape }}"{% unless can_add_bundle %} disabled{% endunless %}>
-            {%- if can_add_bundle -%}{{ block.settings.button_label | escape }}{%- elsif has_enough_products == false -%}Select products first{%- elsif all_available == false -%}Unavailable product{%- else -%}Enable Shopify discount{%- endif -%}
+            {%- if can_add_bundle -%}{{ block.settings.button_label | escape }}{%- elsif has_products == false -%}Select products first{%- elsif all_available == false -%}Unavailable product{%- else -%}Enable Shopify discount{%- endif -%}
           </button>
         </article>
       {%- else -%}<div class="pl-glass pl-empty">Add bundle tier blocks in the theme editor.</div>{%- endfor -%}
@@ -117,9 +110,8 @@
     "type": "tier",
     "name": "Bundle tier",
     "settings": [
-      { "type": "product_list", "id": "bundle_products", "label": "Bundle products", "limit": 12, "info": "Select the products included in this tier. Product count uses the first products in this list." },
+      { "type": "product_list", "id": "bundle_products", "label": "Bundle products", "limit": 12, "info": "All selected products are included, displayed, priced and added to the cart." },
       { "type": "text", "id": "label", "label": "Tier label", "default": "Starter" },
-      { "type": "range", "id": "product_count", "min": 1, "max": 12, "step": 1, "label": "Product count", "info": "Controls how many products from the list are included and displayed.", "default": 2 },
       { "type": "text", "id": "quantity_label", "label": "Quantity label", "default": "Products" },
       { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "No discount" }, { "value": "percentage", "label": "Percentage discount" }, { "value": "fixed", "label": "Fixed rupee discount" }], "default": "none" },
       { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
@@ -131,6 +123,6 @@
       { "type": "checkbox", "id": "featured", "label": "Highlight this tier", "default": false }
     ]
   }],
-  "presets": [{ "name": "Purelane bundle tiers", "blocks": [{ "type": "tier", "settings": { "label": "Starter", "product_count": 2 } }, { "type": "tier", "settings": { "label": "Most popular", "product_count": 3, "featured": true } }, { "type": "tier", "settings": { "label": "Whole home", "product_count": 5 } }] }]
+  "presets": [{ "name": "Purelane bundle tiers", "blocks": [{ "type": "tier", "settings": { "label": "Starter" } }, { "type": "tier", "settings": { "label": "Most popular", "featured": true } }, { "type": "tier", "settings": { "label": "Whole home" } }] }]
 }
 {% endschema %}
