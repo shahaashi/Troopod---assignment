@@ -44,8 +44,8 @@
             "product_2": "kitchen-cleaner-foaming",
             "product_3": "tap-cleaner-limescale-remover",
             "offer_label": "Any 3 products",
-            "discount_type": "none",
-            "discount_value": 0
+            "discount_type": "percentage",
+            "discount_value": 15
           }
         },
         "trust_1": {
