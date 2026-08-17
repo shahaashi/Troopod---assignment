@@ -20,14 +20,34 @@
           assign bundle_product = block.settings.bundle_product
           assign selected_variant = bundle_product.selected_or_first_available_variant
           assign product_count = block.settings.product_count
-          assign display_price = selected_variant.price
-          assign display_compare_price = selected_variant.compare_at_price
+          assign product_sum = 0
+          assign compare_sum = 0
+          for price_index in (1..12)
+            assign price_key = 'image_product_' | append: price_index
+            assign price_product = block.settings[price_key]
+            if price_product == blank and price_index <= product_count
+              assign fallback_index = price_index | minus: 1
+              assign price_product = display_collection.products[fallback_index]
+            endif
+            if price_index <= product_count and price_product != blank
+              assign product_sum = product_sum | plus: price_product.price
+              assign item_compare = price_product.compare_at_price | default: price_product.price
+              assign compare_sum = compare_sum | plus: item_compare
+            endif
+          endfor
+          if product_sum > 0
+            assign display_price = product_sum
+            assign display_compare_price = compare_sum
+          else
+            assign display_price = selected_variant.price
+            assign display_compare_price = selected_variant.compare_at_price
+          endif
           if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
             assign discount_multiplier = 100 | minus: block.settings.discount_value
-            assign display_price = display_compare_price | times: discount_multiplier | divided_by: 100
+            assign display_price = display_price | times: discount_multiplier | divided_by: 100
           elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
             assign discount_amount = block.settings.discount_value | times: 100
-            assign display_price = display_compare_price | minus: discount_amount
+            assign display_price = display_price | minus: discount_amount
           endif
           if display_price < 0
             assign display_price = 0
