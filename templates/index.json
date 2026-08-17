@@ -280,13 +280,17 @@
         "tier_2": {
           "type": "tier",
           "settings": {
-            "bundle_products": [],
+            "bundle_products": [
+              "kitchen-cleaner-foaming",
+              "tap-cleaner-limescale-remover",
+              "washing-machine-cleaner-descaler"
+            ],
             "label": "Most popular",
             "product_count": 3,
             "quantity_label": "Products",
             "discount_type": "percentage",
-            "discount_value": 0,
-            "discount_checkout_ready": false,
+            "discount_value": 4,
+            "discount_checkout_ready": true,
             "price_note": "Flat price per product",
             "benefit_1": "Pick any three products",
             "benefit_2": "Covers kitchen and laundry",
