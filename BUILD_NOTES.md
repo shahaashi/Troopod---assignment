@@ -16,7 +16,7 @@ The implementation is built on Dawn 16 and does not modify Dawn's core product, 
 
 Create at least eight products and assign the storefront collection selected in **Purelane product grid**. The product-grid cards deliberately handle sold-out products, products without featured media, and long titles.
 
-For each hero offer, select the products to display and an optional separate offer product. The offer product supplies the real price and compare-at price. For each combo or bundle tier, select the real Shopify product that represents the purchasable bundle.
+For each hero offer, select one to three products. The offer price is the live Shopify total of the products selected on that offer, so a single-bottle offer takes one product, an “any 2” offer takes two, and an “any 3” offer takes three. Each offer also accepts an optional percentage or fixed rupee discount, which renders as a discounted price with the original total struck through and the saving beside it; leaving the discount type on **None** shows only the product total. The discount entered here is display only, so it must match the Shopify automatic discount created for the same products and quantity. For each combo or bundle tier, select the real Shopify product that represents the purchasable bundle.
 
 Recommended product metafield definitions:
 

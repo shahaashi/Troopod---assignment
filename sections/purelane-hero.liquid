@@ -65,50 +65,57 @@
         {%- if block.type == 'slide' -%}
           {%- liquid
             assign slide_index = slide_index | plus: 1
-            assign first_product = block.settings.product_1 | default: fallback_collection.products[0]
-            assign second_product = block.settings.product_2 | default: fallback_collection.products[1]
-            assign third_product = block.settings.product_3 | default: fallback_collection.products[2]
-            assign subtotal = 0
             assign loading_strategy = 'lazy'
             if slide_index == 1
               assign loading_strategy = 'eager'
             endif
+
+            assign first_product = block.settings.product_1
+            assign second_product = block.settings.product_2
+            assign third_product = block.settings.product_3
+
+            # Fall back to the collection only when this offer has no products of its own.
+            if first_product == blank and second_product == blank and third_product == blank
+              assign first_product = fallback_collection.products[0]
+              if slide_index > 1
+                assign second_product = fallback_collection.products[1]
+              endif
+              if slide_index > 2
+                assign third_product = fallback_collection.products[2]
+              endif
+            endif
+
+            assign lead_product = first_product | default: second_product | default: third_product
+
+            # The offer price is the total of every product selected on this offer.
             assign product_count = 0
+            assign subtotal = 0
             if first_product != blank
               assign product_count = product_count | plus: 1
+              assign subtotal = subtotal | plus: first_product.selected_or_first_available_variant.price
             endif
-            if second_product != blank and slide_index > 1
+            if second_product != blank
               assign product_count = product_count | plus: 1
+              assign subtotal = subtotal | plus: second_product.selected_or_first_available_variant.price
             endif
-            if third_product != blank and slide_index > 2
+            if third_product != blank
               assign product_count = product_count | plus: 1
+              assign subtotal = subtotal | plus: third_product.selected_or_first_available_variant.price
             endif
 
-            if first_product != blank
-              assign first_variant = first_product.selected_or_first_available_variant
-              assign subtotal = subtotal | plus: first_variant.price
+            assign discount_amount = 0
+            if product_count > 0
+              if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
+                assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100.0 | round
+              elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
+                assign discount_amount = block.settings.discount_value | times: 100 | round
+              endif
+              if discount_amount > subtotal
+                assign discount_amount = subtotal
+              endif
             endif
-            if second_product != blank and slide_index > 1
-              assign second_variant = second_product.selected_or_first_available_variant
-              assign subtotal = subtotal | plus: second_variant.price
-            endif
-            if third_product != blank and slide_index > 2
-              assign third_variant = third_product.selected_or_first_available_variant
-              assign subtotal = subtotal | plus: third_variant.price
-            endif
-
-            assign final_price = subtotal
-            if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
-              assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100.0 | round
-              assign final_price = subtotal | minus: discount_amount
-            elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
-              assign discount_amount = block.settings.discount_value | times: 100 | round
-              assign final_price = subtotal | minus: discount_amount
-            endif
-            if final_price < 0
-              assign final_price = 0
-            endif
-            assign saving_amount = subtotal | minus: final_price
+            assign final_price = subtotal | minus: discount_amount
+            assign saving_amount = discount_amount
           -%}
           <div
             class="purelane-hero__slide"
@@ -128,9 +135,6 @@
                     when 3
                       assign featured_product = third_product
                   endcase
-                  if product_position > slide_index
-                    assign featured_product = blank
-                  endif
                 -%}
                 {%- if featured_product != blank -%}
                   {%- assign product_image_alt = featured_product.featured_image.alt | default: featured_product.title -%}
@@ -160,12 +164,12 @@
 
             {%- if product_count > 0 -%}<div class="purelane-hero__offer">
               <span class="purelane-hero__offer-label">
-                {{ block.settings.offer_label | default: first_product.title | default: 'Choose products' | escape }}
+                {{ block.settings.offer_label | default: lead_product.title | default: 'Choose products' | escape }}
               </span>
               <span class="purelane-hero__offer-price">
                 &#8377;{{ final_price | money_without_currency }}
                 {%- if saving_amount > 0 -%}
-                  <span class="purelane-hero__offer-compare">&#8377;{{ subtotal | money_without_currency }}</span>
+                  <s class="purelane-hero__offer-compare">&#8377;{{ subtotal | money_without_currency }}</s>
                 {%- endif -%}
               </span>
               {%- if saving_amount > 0 -%}
@@ -331,7 +335,8 @@
         {
           "type": "product",
           "id": "product_1",
-          "label": "Product 1"
+          "label": "Product 1",
+          "info": "The offer price is the total of every product selected below. Pick one product for a single bottle offer, two for an any 2 offer, three for an any 3 offer."
         },
         {
           "type": "product",
@@ -358,13 +363,14 @@
             { "value": "percentage", "label": "Percentage" },
             { "value": "fixed", "label": "Fixed rupee amount" }
           ],
+          "info": "Leave on None to show only the product total. Match the Shopify automatic discount created for this offer so the homepage and checkout agree.",
           "default": "none"
         },
         {
           "type": "number",
           "id": "discount_value",
           "label": "Discount value",
-          "info": "Enter a percentage or rupee amount.",
+          "info": "Percentage off the total, or a rupee amount off the total.",
           "default": 0
         }
       ]
