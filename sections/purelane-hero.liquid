@@ -68,9 +68,7 @@
             assign first_product = block.settings.product_1 | default: fallback_collection.products[0]
             assign second_product = block.settings.product_2 | default: fallback_collection.products[1]
             assign third_product = block.settings.product_3 | default: fallback_collection.products[2]
-            assign offer_product = block.settings.offer_product | default: first_product
-            assign offer_price = offer_product.price
-            assign regular_price = 0
+            assign subtotal = 0
             assign loading_strategy = 'lazy'
             if slide_index == 1
               assign loading_strategy = 'eager'
@@ -86,27 +84,31 @@
               assign product_count = product_count | plus: 1
             endif
 
-            comment
-              The compare price for a multi-product offer is the sum of the
-              displayed products. A bundle product may still provide an
-              explicit compare-at price, but a single product's compare-at
-              price must never be presented as the value of an Any 2/Any 3
-              offer.
-            endcomment
             if first_product != blank
-              assign regular_price = regular_price | plus: first_product.price
+              assign first_variant = first_product.selected_or_first_available_variant
+              assign subtotal = subtotal | plus: first_variant.price
             endif
             if second_product != blank and slide_index > 1
-              assign regular_price = regular_price | plus: second_product.price
+              assign second_variant = second_product.selected_or_first_available_variant
+              assign subtotal = subtotal | plus: second_variant.price
             endif
             if third_product != blank and slide_index > 2
-              assign regular_price = regular_price | plus: third_product.price
+              assign third_variant = third_product.selected_or_first_available_variant
+              assign subtotal = subtotal | plus: third_variant.price
             endif
-            assign compare_price = regular_price
-            if offer_product.compare_at_price > offer_price
-              assign compare_price = offer_product.compare_at_price
+
+            assign final_price = subtotal
+            if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
+              assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100.0 | round
+              assign final_price = subtotal | minus: discount_amount
+            elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
+              assign discount_amount = block.settings.discount_value | times: 100 | round
+              assign final_price = subtotal | minus: discount_amount
             endif
-            assign saving_amount = compare_price | minus: offer_price
+            if final_price < 0
+              assign final_price = 0
+            endif
+            assign saving_amount = subtotal | minus: final_price
           -%}
           <div
             class="purelane-hero__slide"
@@ -156,23 +158,19 @@
               {%- endif -%}
             </div>
 
-            {%- if offer_product != blank -%}<div class="purelane-hero__offer">
+            {%- if product_count > 0 -%}<div class="purelane-hero__offer">
               <span class="purelane-hero__offer-label">
-                {{ block.settings.offer_label | default: offer_product.title | default: 'Choose products' | escape }}
+                {{ block.settings.offer_label | default: first_product.title | default: 'Choose products' | escape }}
               </span>
               <span class="purelane-hero__offer-price">
-                {{ offer_price | money }}
-                {%- if compare_price > offer_price -%}
-                  <span class="purelane-hero__offer-compare">{{ compare_price | money }}</span>
+                &#8377;{{ final_price | money_without_currency }}
+                {%- if saving_amount > 0 -%}
+                  <span class="purelane-hero__offer-compare">&#8377;{{ subtotal | money_without_currency }}</span>
                 {%- endif -%}
               </span>
-              {%- if block.settings.saving_text != blank -%}
+              {%- if saving_amount > 0 -%}
                 <span class="purelane-hero__offer-saving">
-                  {%- if block.settings.saving_text == 'Save more' or block.settings.saving_text == 'Best value' -%}
-                    Save {{ saving_amount | money }}
-                  {%- else -%}
-                    {{ block.settings.saving_text | escape }}
-                  {%- endif -%}
+                  Save &#8377;{{ saving_amount | money_without_currency }}
                 </span>
               {%- endif -%}
             </div>{%- endif -%}
@@ -332,12 +330,6 @@
         },
         {
           "type": "product",
-          "id": "offer_product",
-          "label": "Offer product",
-          "info": "Price and compare-at price come from this product. Leave blank to use Product 1."
-        },
-        {
-          "type": "product",
           "id": "product_1",
           "label": "Product 1"
         },
@@ -358,11 +350,23 @@
           "default": "Featured offer"
         },
         {
-          "type": "text",
-          "id": "saving_text",
-          "label": "Saving text",
-          "default": "Save more"
+          "type": "select",
+          "id": "discount_type",
+          "label": "Discount type",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "percentage", "label": "Percentage" },
+            { "value": "fixed", "label": "Fixed rupee amount" }
+          ],
+          "default": "none"
         },
+        {
+          "type": "number",
+          "id": "discount_value",
+          "label": "Discount value",
+          "info": "Enter a percentage or rupee amount.",
+          "default": 0
+        }
       ]
     },
     {
@@ -386,22 +390,19 @@
         {
           "type": "slide",
           "settings": {
-            "offer_label": "Single bottle",
-            "saving_text": "33% off"
+            "offer_label": "Single bottle"
           }
         },
         {
           "type": "slide",
           "settings": {
-            "offer_label": "Any 2 products",
-            "saving_text": "Save more"
+            "offer_label": "Any 2 products"
           }
         },
         {
           "type": "slide",
           "settings": {
-            "offer_label": "Any 3 products",
-            "saving_text": "Best value"
+            "offer_label": "Any 3 products"
           }
         },
         {

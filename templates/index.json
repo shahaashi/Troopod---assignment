@@ -16,36 +16,36 @@
           "type": "slide",
           "settings": {
             "icon": "leaf",
-            "offer_product": "",
             "product_1": "",
             "product_2": "",
             "product_3": "",
             "offer_label": "Single bottle",
-            "saving_text": "33% off"
+            "discount_type": "none",
+            "discount_value": 0
           }
         },
         "offer_2": {
           "type": "slide",
           "settings": {
             "icon": "leaf",
-            "offer_product": "copper-bronze-brass-cleaner",
             "product_1": "",
             "product_2": "",
             "product_3": "",
             "offer_label": "Any 2 products",
-            "saving_text": "Save more"
+            "discount_type": "none",
+            "discount_value": 0
           }
         },
         "offer_3": {
           "type": "slide",
           "settings": {
             "icon": "leaf",
-            "offer_product": "",
             "product_1": "copper-bronze-brass-cleaner",
             "product_2": "kitchen-cleaner-foaming",
             "product_3": "tap-cleaner-limescale-remover",
             "offer_label": "Any 3 products",
-            "saving_text": "Best value"
+            "discount_type": "none",
+            "discount_value": 0
           }
         },
         "trust_1": {
