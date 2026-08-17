@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "purelane_hero": {
@@ -160,9 +169,9 @@
               "kitchen-cleaner-foaming"
             ],
             "title": "Kitchen Essentials",
-            "discount_type": "none",
-            "discount_value": 0,
             "description": "<p>Everything for a sparkling kitchen, already grouped so there is no need to pick separately.</p>",
+            "discount_type": "percentage",
+            "discount_value": 5,
             "saving_label": "",
             "flag": "Most popular",
             "fine_print": "Inclusive of all taxes · COD available",
@@ -173,11 +182,14 @@
         "combo_2": {
           "type": "combo",
           "settings": {
-            "products": [],
+            "products": [
+              "tap-cleaner-limescale-remover",
+              "kitchen-cleaner-foaming"
+            ],
             "title": "Laundry care bundle",
-            "discount_type": "none",
-            "discount_value": 0,
             "description": "<p>A softer, fresher wash and a cleaner machine, all in one box.</p>",
+            "discount_type": "fixed",
+            "discount_value": 100,
             "saving_label": "",
             "flag": "",
             "fine_print": "Inclusive of all taxes · COD available",
@@ -188,11 +200,16 @@
         "combo_3": {
           "type": "combo",
           "settings": {
-            "products": [],
+            "products": [
+              "copper-bronze-brass-cleaner",
+              "kitchen-cleaner-foaming",
+              "tap-cleaner-limescale-remover",
+              "washing-machine-cleaner-descaler"
+            ],
             "title": "Complete home bundle",
-            "discount_type": "none",
-            "discount_value": 0,
             "description": "<p>Cover every room with our biggest saving box.</p>",
+            "discount_type": "percentage",
+            "discount_value": 10,
             "saving_label": "",
             "flag": "Best value",
             "fine_print": "Inclusive of all taxes · COD available",
@@ -205,9 +222,9 @@
           "settings": {
             "products": [],
             "title": "Bathroom deep clean",
+            "description": "<p>Includes: Toilet Cleaner, Tap Cleaner & Magic Eraser. A complete bathroom refresh in one box.</p>",
             "discount_type": "none",
             "discount_value": 0,
-            "description": "<p>Includes: Toilet Cleaner, Tap Cleaner & Magic Eraser. A complete bathroom refresh in one box.</p>",
             "saving_label": "",
             "flag": "",
             "fine_print": "Inclusive of all taxes · COD available",
