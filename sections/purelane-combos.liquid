@@ -75,7 +75,6 @@
             {%- if display_price > 0 -%}
               <div class="pl-combo__price">
                 <strong>{{ display_price | money }}</strong>
-                {%- if display_compare_price > display_price -%}<s>{{ display_compare_price | money }}</s><em class="pl-combo__saving">Save {{ saving | money }}</em>{%- endif -%}
               </div>
             {%- endif -%}
             {%- if block.settings.fine_print != blank -%}<div class="pl-combo__fine">{{ block.settings.fine_print | escape }}</div>{%- endif -%}

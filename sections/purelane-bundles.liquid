@@ -15,10 +15,12 @@
           assign selected_count = products.size
           assign missing_count = product_count | minus: selected_count
           assign subtotal = 0
+          assign included_count = 0
           assign all_available = true
           for product in products limit: 12
             if forloop.index <= product_count
               assign variant = product.selected_or_first_available_variant
+              assign included_count = included_count | plus: 1
               assign subtotal = subtotal | plus: variant.price
               unless variant.available
                 assign all_available = false
@@ -29,20 +31,27 @@
           if selected_count >= product_count
             assign has_enough_products = true
           endif
-          assign final_price = subtotal
+          assign final_price = 0
           assign savings = 0
-          if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
-            assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100
-            assign final_price = subtotal | minus: discount_amount
-          elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
-            assign discount_amount = block.settings.discount_value | times: 100
-            assign final_price = subtotal | minus: discount_amount
-          endif
-          if final_price < 0
-            assign final_price = 0
-          endif
-          if final_price < subtotal
-            assign savings = subtotal | minus: final_price
+          assign unit_price = 0
+          if has_enough_products
+            assign final_price = subtotal
+            if block.settings.discount_type == 'percentage' and block.settings.discount_value > 0
+              assign discount_amount = subtotal | times: block.settings.discount_value | divided_by: 100
+              assign final_price = subtotal | minus: discount_amount
+            elsif block.settings.discount_type == 'fixed' and block.settings.discount_value > 0
+              assign discount_amount = block.settings.discount_value | times: 100
+              assign final_price = subtotal | minus: discount_amount
+            endif
+            if final_price < 0
+              assign final_price = 0
+            endif
+            if final_price < subtotal
+              assign savings = subtotal | minus: final_price
+            endif
+            if included_count > 0
+              assign unit_price = final_price | divided_by: included_count
+            endif
           endif
           assign checkout_ready = true
           if block.settings.discount_type != 'none' and block.settings.discount_value > 0 and block.settings.discount_checkout_ready == false
@@ -63,11 +72,11 @@
             {%- endfor -%}
           </div>
           <div class="pl-tier__qty">{{ product_count }}<small>{{ block.settings.quantity_label | escape }}</small></div>
-          {%- if subtotal > 0 -%}
+          {%- if has_enough_products and subtotal > 0 -%}
             <div class="pl-tier__price">{{ final_price | money }}{% if savings > 0 %}<s>{{ subtotal | money }}</s>{% endif %}</div>
             {%- if savings > 0 -%}<p class="pl-tier__saving">Save {{ savings | money }}</p>{%- endif -%}
+            <p class="pl-tier__note">Flat {{ unit_price | money }} per product</p>
           {%- endif -%}
-          {%- if block.settings.price_note != blank -%}<p class="pl-tier__note">{{ block.settings.price_note | escape }}</p>{%- endif -%}
           {%- unless has_enough_products -%}<p class="pl-tier__warning" role="alert">Select {{ missing_count }} more product{% if missing_count != 1 %}s{% endif %} for this bundle.</p>{%- endunless -%}
           {%- unless all_available -%}<p class="pl-tier__warning" role="alert">One or more selected products is unavailable.</p>{%- endunless -%}
           {%- if checkout_ready == false -%}<p class="pl-tier__warning" role="alert">Activate the matching Shopify automatic discount or Function before enabling this bundle.</p>{%- endif -%}
@@ -115,7 +124,6 @@
       { "type": "select", "id": "discount_type", "label": "Discount type", "options": [{ "value": "none", "label": "No discount" }, { "value": "percentage", "label": "Percentage discount" }, { "value": "fixed", "label": "Fixed rupee discount" }], "default": "none" },
       { "type": "number", "id": "discount_value", "label": "Discount value", "info": "Enter a percentage or rupee amount.", "default": 0 },
       { "type": "checkbox", "id": "discount_checkout_ready", "label": "Matching Shopify discount is active", "info": "Enable only after configuring the same discount in Shopify Automatic Discounts or a Shopify Function.", "default": false },
-      { "type": "text", "id": "price_note", "label": "Price note", "default": "Flat price per product" },
       { "type": "text", "id": "benefit_1", "label": "Benefit 1", "default": "Pick any products" },
       { "type": "text", "id": "benefit_2", "label": "Benefit 2", "default": "Free shipping across India" },
       { "type": "text", "id": "benefit_3", "label": "Benefit 3" },
